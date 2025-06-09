@@ -1,0 +1,31 @@
+services:
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=${WEBUI_PORT}
+      - TORRENTING_PORT=${TORRENTING_PORT}
+    volumes:
+      - ./config:/config 
+      - "/media/inigo/My Passport/Media_Server/torrent_downloads:/downloads"
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.qbittorrent.rule=Host(`${TRAEFIK_QBIT}`)"
+      - "traefik.http.routers.qbittorrent.entrypoints=https"
+      - "traefik.http.routers.qbittorrent.tls=true"  
+      - "traefik.http.routers.qbittorrent.tls.certresolver=mydnschallenge"
+      - "traefik.http.services.qbittorrent.loadbalancer.server.port=8080"
+      # Watchtower Update
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - proxy
+networks:
+  proxy:
+    external: true

@@ -3,3 +3,4 @@
 **/config/
 docker-compose.override.yml
 acme.json
+**/cache

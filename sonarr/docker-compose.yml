@@ -1,0 +1,27 @@
+services:
+  sonarr: 
+      image: linuxserver/sonarr:latest 
+      container_name: sonarr 
+      hostname: sonarr 
+      networks: 
+        - proxy 
+      environment: 
+        - PUID=${PUID} 
+        - PGID=${PGID} 
+        - TZ=${TZ} 
+      volumes: 
+        - ./config:/config 
+        - "/media/inigo/My Passport/Media_Server/torrent_downloads:/downloads" 
+      restart: unless-stopped
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.sonarr.rule=Host(`${TRAEFIK_SONARR}`)"
+        - "traefik.http.routers.sonarr.entrypoints=https"
+        - "traefik.http.routers.sonarr.tls=true"  
+        - "traefik.http.routers.sonarr.tls.certresolver=mydnschallenge"
+        - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+        # Watchtower Update
+        - "com.centurylinklabs.watchtower.enable=true" 
+networks:
+  proxy:
+    external: true 

@@ -1,0 +1,26 @@
+services:
+  prowlarr: 
+      image: linuxserver/prowlarr:latest 
+      container_name: prowlarr 
+      hostname: prowlarr 
+      networks: 
+        - proxy 
+      environment: 
+        - PUID=${PUID} 
+        - PGID=${PGID} 
+        - TZ=${TZ} 
+      volumes: 
+        - ./config:/config  
+      restart: unless-stopped
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.prowlarr.rule=Host(`${TRAEFIK_PROWLARR}`)"
+        - "traefik.http.routers.prowlarr.entrypoints=https"
+        - "traefik.http.routers.prowlarr.tls=true"  
+        - "traefik.http.routers.prowlarr.tls.certresolver=mydnschallenge"
+        - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+        # Watchtower Update
+        - "com.centurylinklabs.watchtower.enable=true"
+networks:
+  proxy:
+    external: true
