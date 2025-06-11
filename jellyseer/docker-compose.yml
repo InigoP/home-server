@@ -1,0 +1,25 @@
+services:
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment: 
+      - PUID=${PUID} 
+      - PGID=${PGID} 
+      - TZ=${TZ} 
+    networks: 
+      - proxy 
+    volumes: 
+      - ./config:/app/config
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyseerr.rule=Host(`${TRAEFIK_JELLYSEERR}`)"
+      - "traefik.http.routers.jellyseerr.entrypoints=https"
+      - "traefik.http.routers.jellyseerr.tls=true"  
+      - "traefik.http.routers.jellyseerr.tls.certresolver=mydnschallenge"
+      - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+networks:
+  proxy:
+    external: true

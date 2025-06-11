@@ -10,7 +10,7 @@ services:
       - TORRENTING_PORT=${TORRENTING_PORT}
     volumes:
       - ./config:/config 
-      - "/media/inigo/My Passport/Media_Server/torrent_downloads:/downloads"
+      - "/media/inigo/My Passport2/Media_Server/torrents:/media_server/torrents"
     ports:
       - 6881:6881
       - 6881:6881/udp

@@ -9,6 +9,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ./config:/config
+      - "/media/inigo/My Passport2/Media_Server:/media_server"  
     restart: unless-stopped
     networks:
       - proxy

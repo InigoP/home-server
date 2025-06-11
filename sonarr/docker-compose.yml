@@ -11,7 +11,7 @@ services:
         - TZ=${TZ} 
       volumes: 
         - ./config:/config 
-        - "/media/inigo/My Passport/Media_Server/torrent_downloads:/downloads" 
+        - "/media/inigo/My Passport2/Media_Server:/media_server" 
       restart: unless-stopped
       labels:
         - "traefik.enable=true"

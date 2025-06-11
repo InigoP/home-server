@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   jellyfin:
     image: jellyfin/jellyfin:latest
@@ -8,8 +6,7 @@ services:
     volumes:
         - ./config:/config
         - ./cache:/cache
-        - "/media/inigo/My Passport/Media_Server/movies:/media/movies"
-        - "/media/inigo/My Passport/Media_Server/tv_shows:/media/tv_shows"
+        - "/media/inigo/My Passport2/Media_Server/media:/media_server/media"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.jellyfin.rule=Host(`${TRAEFIK_JELLYFIN}`)"
