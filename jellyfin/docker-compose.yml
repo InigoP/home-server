@@ -6,7 +6,7 @@ services:
     volumes:
         - ./config:/config
         - ./cache:/cache
-        - "/media/inigo/My Passport2/Media_Server/media:/media_server/media"
+        - "/mnt/mypassport/Media_Server/media:/media_server/media"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.jellyfin.rule=Host(`${TRAEFIK_JELLYFIN}`)"
