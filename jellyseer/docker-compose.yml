@@ -1,5 +1,5 @@
 services:
-  jellyseerr:
+  jellyseer:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
     environment: 

@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  traefik:
+    extends:
+      file: ./traefik/docker-compose.yml
+      service: traefik
+
+  socket-proxy:
+    extends:
+      file: ./traefik/docker-compose.yml
+      service: socket-proxy
+
+  jellyfin:
+    extends:
+      file: ./jellyfin/docker-compose.yml
+      service: jellyfin
+  
+  bazarr:
+    extends:
+      file: ./bazarr/docker-compose.yml
+      service: bazarr
+
+  jellyseer:
+    extends:
+      file: ./jellyseer/docker-compose.yml
+      service: jellyseer
+
+  prowlarr:
+    extends:
+      file: ./prowlarr/docker-compose.yml
+      service: prowlarr
+
+  qbittorrent:
+    extends:
+      file: ./qbittorrent/docker-compose.yml
+      service: qbittorrent
+
+  radarr:
+    extends:
+      file: ./radarr/docker-compose.yml
+      service: radarr
+
+  sonarr:
+    extends:
+      file: ./sonarr/docker-compose.yml
+      service: sonarr
+
+networks:
+  proxy:
+    external: true
