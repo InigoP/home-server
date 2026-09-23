@@ -4,8 +4,13 @@
 
 Guide with examples !
 
+> 📘 **New here?** Read the **[Home Server Guide](HOME-SERVER-GUIDE.md)** — the
+> whole setup explained in plain English, plus a per-service table and
+> troubleshooting cheatsheet.
+
 # Services
 
+* [pihole](pihole/) - network-wide ad blocker (your DNS / phone book)
 * [traefik](traefik/) - reverse proxy and SSL manager
 * [borg-backup](borg-backup/) - backup scripts (local and AWS)
 * [fail2ban](fail2ban/) - security tool (ban IP)

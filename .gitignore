@@ -4,3 +4,20 @@
 docker-compose.override.yml
 acme.json
 **/cache
+
+# Pi-hole runtime state, secrets & generated TLS material (never in a public repo)
+**/etc-pihole/cli_pw
+**/etc-pihole/tls*
+**/etc-pihole/logrotate
+**/etc-pihole/gravity*.db*
+**/etc-pihole/gravity_backups/
+**/etc-pihole/config_backups/
+**/etc-pihole/migration_backup/
+**/etc-pihole/listsCache/
+**/etc-pihole/pihole-FTL.db*
+**/etc-pihole/dhcp.leases
+**/etc-dnsmasq.d/
+
+# private keys anywhere
+*.pem
+*.key
