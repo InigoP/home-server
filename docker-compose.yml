@@ -1,51 +1,79 @@
 version: "3.8"
 
 services:
-  traefik:
-    extends:
-      file: ./traefik/docker-compose.yml
-      service: traefik
-
   socket-proxy:
     extends:
       file: ./traefik/docker-compose.yml
       service: socket-proxy
-
+ 
+  # NOTE: `extends` does not carry over `depends_on` (or `links`/`volumes_from`)
+  # from the sub-file, since those reference sibling services that may not
+  # exist in this file's context. Compose drops them silently, so every
+  # `depends_on` below has to be restated here at the top level.
+  traefik:
+    extends:
+      file: ./traefik/docker-compose.yml
+      service: traefik
+    depends_on:
+      socket-proxy:
+        condition: service_started
+ 
   jellyfin:
     extends:
       file: ./jellyfin/docker-compose.yml
       service: jellyfin
-  
+    depends_on:
+      traefik:
+        condition: service_healthy
+ 
   bazarr:
     extends:
       file: ./bazarr/docker-compose.yml
       service: bazarr
-
+    depends_on:
+      traefik:
+        condition: service_healthy
+ 
   jellyseer:
     extends:
       file: ./jellyseer/docker-compose.yml
       service: jellyseer
-
+    depends_on:
+      traefik:
+        condition: service_healthy
+ 
   prowlarr:
     extends:
       file: ./prowlarr/docker-compose.yml
       service: prowlarr
-
+    depends_on:
+      traefik:
+        condition: service_healthy
+ 
   qbittorrent:
     extends:
       file: ./qbittorrent/docker-compose.yml
       service: qbittorrent
-
+    depends_on:
+      traefik:
+        condition: service_healthy
+ 
   radarr:
     extends:
       file: ./radarr/docker-compose.yml
       service: radarr
-
+    depends_on:
+      traefik:
+        condition: service_healthy
+ 
   sonarr:
     extends:
       file: ./sonarr/docker-compose.yml
       service: sonarr
-
+    depends_on:
+      traefik:
+        condition: service_healthy
+ 
 networks:
   proxy:
     external: true

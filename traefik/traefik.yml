@@ -1,19 +1,21 @@
 entryPoints:
   http:
     address: ":80"
-
+ 
   https:
     address: ":443"
-
+ 
+ping: {}
+ 
 providers:
   docker:
     endpoint: "tcp://socket-proxy:2375"
     exposedByDefault: false
-
+ 
   file:
     directory: /rules
     watch: true
-
+ 
 certificatesResolvers:
   mydnschallenge:
     acme:
@@ -22,6 +24,7 @@ certificatesResolvers:
       dnsChallenge:
         provider: cloudflare
         delayBeforeCheck: 10
-
+ 
 log:
   level: DEBUG
+ 
