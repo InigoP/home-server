@@ -1,20 +1,60 @@
-version: "3"
-
 services:
   watchtower:
-    image: containrrr/watchtower
+    # Pinned: the `latest` tag is unversioned, and an unpinned auto-updater is
+    # how you end up debugging a surprise major bump. 1.7.1 is the last release.
+    image: containrrr/watchtower:1.7.1
     container_name: watchtower
     restart: unless-stopped
     volumes:
+      # Read-write is required: watchtower has to stop/recreate containers to
+      # apply an update. See the Security note in the README.
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      # Same network as the rest of the stack. Watchtower only talks to the
+      # Docker socket and to the registry, but joining `proxy` avoids creating a
+      # second, unused bridge network for this project.
+      - proxy
     environment:
-      - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_LABEL_ENABLE=true
-      #- WATCHTOWER_MONITOR_ONLY=true
-      #- WATCHTOWER_POLL_INTERVAL=30
+      - TZ=${TZ}
+
+      # Check every Monday at 04:00, during the quiet hours.
       - WATCHTOWER_SCHEDULE=0 0 4 * * MON
-      - WATCHTOWER_NOTIFICATIONS=gotify
-      - WATCHTOWER_NOTIFICATION_GOTIFY_URL=${GOTIFY_URL}
-      - WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN=${GOTIFY_TOKEN}
+
+      # Only touch containers that opt in with the watchtower label, and remove
+      # the old image after a successful update (otherwise / fills up).
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_CLEANUP=true
+
+      # When several containers update in the same run, recreate them one at a
+      # time instead of all at once, so the stack is never fully down.
+      # Watchtower refuses to start if this is on together with MONITOR_ONLY,
+      # so it lives in .env and gets switched on at the same time.
+      - WATCHTOWER_ROLLING_RESTART=${WATCHTOWER_ROLLING_RESTART:-false}
+
+      # Enable the pre-check / post-update lifecycle hooks (used if you later add
+      # a backup-before-update script).
+      - WATCHTOWER_LIFECYCLE_HOOKS=true
+      - WATCHTOWER_INCLUDE_STOPPED=false
+
+      # Report-only until the pending updates have been reviewed. Every image in
+      # this stack is over a year behind, so the first real run is a big jump
+      # (Sonarr/Radarr/Jellyfin/Traefik all migrate their databases).
+      # Set to false in .env to start applying updates.
+      - WATCHTOWER_MONITOR_ONLY=${WATCHTOWER_MONITOR_ONLY:-true}
+
+      # Notifications go through shoutrrr so any service it supports works
+      # without a code change. This one posts to the "server updates" channel,
+      # while the media channel webhook lives in DISCORD_WEBHOOK_URL for
+      # Jellyseerr/Radarr/Sonarr.
+      # NOTE: shoutrrr wants its own URL format, not a Discord webhook URL:
+      #   https://discord.com/api/webhooks/<id>/<token>  ->  discord://<token>@<id>
+      # Both WATCHTOWER_* values have to be set together, or watchtower starts
+      # without notifications.
+      - WATCHTOWER_NOTIFICATIONS=${WATCHTOWER_NOTIFICATIONS:-}
+      - WATCHTOWER_NOTIFICATION_URL=${WATCHTOWER_DISCORD_URL:-}
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
+
+networks:
+  proxy:
+    external: true

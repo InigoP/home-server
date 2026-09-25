@@ -1,16 +1,42 @@
 services:
+  # This service is now Seerr (the project that Jellyseerr and Overseerr merged
+  # into). The container, service and URL are still called "jellyseerr" so that
+  # jellyseerr.pingu93.com and any bookmarks keep working.
+  #
+  # Upgraded from fallenbagel/jellyseerr 2.7.3 on 2026-09-25. That image line is
+  # frozen (last build Aug 2025) and could not authenticate against Jellyfin 12,
+  # which removed the legacy X-Emby-Token header in a migration.
   jellyseer:
-    image: fallenbagel/jellyseerr:latest
+    image: ghcr.io/seerr-team/seerr:latest
     container_name: jellyseerr
-    environment: 
-      - PUID=${PUID} 
-      - PGID=${PGID} 
-      - TZ=${TZ} 
-    networks: 
-      - proxy 
-    volumes: 
+
+    # The Seerr image ships no init process, so PID 1 reaping has to be provided
+    # by Docker. Required since 3.0.
+    init: true
+
+    environment:
+      - TZ=${TZ}
+      # Seerr also defaults to 'debug' when unset (~900 KB/day of sync noise).
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      # NOTE: PUID/PGID are deliberately gone. Seerr runs as the built-in `node`
+      # user (UID 1000) and does not support remapping. The config folder must be
+      # owned by 1000:1000 or the app cannot write to it.
+
+    networks:
+      - proxy
+
+    volumes:
       - ./config:/app/config
+
     restart: unless-stopped
+
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1
+      start_period: 60s
+      timeout: 5s
+      interval: 30s
+      retries: 3
+
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.jellyseerr.rule=Host(`${TRAEFIK_JELLYSEERR}`)"

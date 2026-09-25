@@ -124,25 +124,64 @@ Two helpers make this safe:
 | — | **Traefik** | Front door: routes URLs → boxes, handles padlocks | `traefik/` | ✅ |
 | — **socket-proxy** | Guard between Traefik and Docker | `traefik/` | ✅ |
 | `https://jellyfin.pingu93.com` | **Jellyfin** | Your personal Netflix: plays your movies/TV on any device | `jellyfin/` | ✅ |
-| `https://jellyseerr.pingu93.com` | **Jellyseerr** | Pretty request page: "I want to watch X" — the starting pistol | `jellyseer/` | ✅ |
+| `https://jellyseerr.pingu93.com` | **Seerr** | Pretty request page: "I want to watch X" — the starting pistol | `jellyseer/` | ✅ |
 | `https://prowlarr.pingu93.com` | **Prowlarr** | Keeps the list of torrent/usenet sources up to date | `prowlarr/` | ✅ |
 | `https://radarr.pingu93.com` | **Radarr** | Movie butler: finds & imports movies | `radarr/` | ✅ |
 | `https://sonarr.pingu93.com` | **Sonarr** | TV butler: finds & imports episodes | `sonarr/` | ✅ |
 | `https://bazarr.pingu93.com` | **Bazarr** | Subtitle butler: downloads subtitles for your library | `bazarr/` | ✅ |
 | `https://qbit.pingu93.com` | **qBittorrent** | The actual downloader (torrent client) | `qbittorrent/` | ✅ |
-| — | **Watchtower** | Nightly babysitter: updates the other boxes | `watchtower/` | ❌ own folder |
+| — | **Watchtower** | Update babysitter: every Monday 04:00 it checks the other boxes for new versions | `watchtower/` | ✅ |
 | `https://...` | **Transmission** | An alternative torrent client, present but not currently running | `transmission/` | ❌ own folder |
 
 > Services marked ❌ are started from their own folder
 > (`cd pihole && docker compose up -d`), because the root `docker-compose.yml`
 > doesn't include them.
 
+### How updates work (Watchtower)
+
+Watchtower is the only box that changes the others, so it's worth knowing how it
+behaves:
+
+- **It only touches boxes that opt in.** Every service carries the label
+  `com.centurylinklabs.watchtower.enable=true`. Remove that label from a service
+  and Watchtower will never touch it.
+- **It runs Monday 04:00.** Any box whose upstream image changed gets pulled and
+  recreated with the exact same settings. Old images are cleaned up afterwards
+  so the disk doesn't fill up.
+- **It updates one box at a time** (`WATCHTOWER_ROLLING_RESTART`), so the stack
+  is never all down at once.
+- **It currently only reports.** `WATCHTOWER_MONITOR_ONLY=true` makes it list
+  which images have an update without changing anything — a safe way to see what
+  a version jump would do. When you're happy with that list, set it to `false` in
+  `.env` and set `WATCHTOWER_ROLLING_RESTART=true` at the same time (Watchtower
+  refuses to start with both on), then `docker compose up -d watchtower`.
+- **Pin versions for anything you don't want jumping.** An auto-updater on
+  `latest` tags will eventually pull a major version at you. That is how this
+  stack ended up over a year behind: Watchtower was never actually running, so
+  nothing auto-updated. Pi-hole migrates its database on upgrade, so check its
+  release notes before letting it update on its own.
+- **`docker compose up` is an updater too.** Watchtower being in report-only mode
+  does not stop Compose from upgrading a service. Per the Compose spec, the
+  default pull policy is `missing`, and: *"The `latest` tag is always pulled even
+  when the `missing` pull policy is used."* So restarting one box to change an
+  environment variable can silently jump it a whole major version.
+
+  If you want to recreate a container **without** changing its version, skip the
+  pull:
+
+  ```bash
+  docker compose up -d --pull never <service>
+  ```
+
+  Otherwise use `docker compose pull <service>` deliberately, so the version
+  change is a choice you made rather than a side effect.
+
 ### How the media pipeline works
 
 One request flows through the whole crew automatically:
 
 ```
-You tap "Request" in Jellyseerr
+You tap "Request" in Seerr
         ↓
 Prowlarr  →  asks the sources: "who has Season 3 of X?"
         ↓
@@ -157,8 +196,45 @@ Bazarr    →  grabs subtitles for it
 Jellyfin  →  it now just appears in your library, ready to watch
 ```
 
-You only ever touch **Jellyseerr** (to ask) and **Jellyfin** (to watch). The
+You only ever touch **Seerr** (to ask) and **Jellyfin** (to watch). The
 rest is plumbing.
+
+### A note on the name "Seerr"
+
+Jellyseerr and Overseerr were two separate projects that merged into one, now
+called **Seerr**. This box runs Seerr 3.4.1, but the container, the compose
+service and the web address are all still called `jellyseerr` so that
+`jellyseerr.pingu93.com` and any bookmarks keep working. Nothing to do about it —
+it just looks odd in `docker ps`.
+
+The previous image, `fallenbagel/jellyseerr`, stopped being published in August
+2025 and could not talk to Jellyfin 12 at all (Jellyfin 12 removed the old
+`X-Emby-Token` auth header, so every library sync failed with a 401). The switch
+to `ghcr.io/seerr-team/seerr` fixed that, and also closed three CVEs — including
+one that let a logged-in user read another user's notification webhook URL.
+
+Two things changed in the compose file because of it: `init: true` (the new image
+has no init process of its own), and `PUID`/`PGID` are gone (Seerr always runs as
+its built-in `node` user, UID 1000, so `jellyseer/config` must be owned by
+1000:1000).
+
+### Getting told what happened (Discord)
+
+Two Discord webhooks, both in gitignored `.env` files, keep you informed:
+
+| Channel | Posted by | What you get |
+|---|---|---|
+| server updates | Watchtower | "radarr 5.25 → 6.4.4", and the same for every other box, every Monday 04:00 |
+| media | Seerr | a request waiting for approval, and a title that just appeared in Jellyfin |
+| media | Radarr / Sonarr | "grabbed" (with release name, indexer and size), download finished, imported |
+
+Seerr's Discord agent fires on request-pending, added-to-Jellyfin and failed.
+It deliberately does *not* fire on "request approved", because Radarr and
+Sonarr already announce the same moment with better detail — otherwise every
+request would ping twice.
+
+Nothing here needs Jellyseerr's own per-user notification settings to be ticked;
+those only control who gets an `@mention`.
 
 ---
 
@@ -285,17 +361,20 @@ home-server/
 ├── traefik/                # front door: traefik.yml, rules/, certs, README
 ├── pihole/                 # ad blocker (own compose + its README)
 ├── jellyfin/               # your Netflix
-├── jellyseer/              # request page
+├── jellyseer/              # request page (runs Seerr; name kept for the URL)
 ├── prowlarr/               # source lists
 ├── radarr/                 # movies
 ├── sonarr/                 # TV
 ├── bazarr/                 # subtitles
 ├── qbittorrent/            # downloader
 ├── transmission/           # alternative downloader (not in root stack)
-├── watchtower/             # auto-updater (own compose)
+├── watchtower/             # auto-updater (in root stack; .env holds the Discord webhook)
 └── _utilities/             # logos/icons used in the docs
 ```
 
 Each folder is self-contained: `cd` into it, edit its `.env` if needed, and
 `docker compose up -d`. They all share the same `proxy` network so Traefik can
 find them.
+
+Secrets (Cloudflare key, Discord webhook, PUID/PGID, the service URLs) live in
+the `.env` files, which are gitignored on purpose — never commit them.

@@ -71,7 +71,21 @@ services:
     depends_on:
       traefik:
         condition: service_healthy
- 
+
+  # NOTE: `extends` resolves `${VAR}` in the sub-file against this project's
+  # environment, not the sub-file's own `.env`, so the settings that must come
+  # from the top-level `.env` are restated here (local keys win over extended).
+  watchtower:
+    extends:
+      file: ./watchtower/docker-compose.yml
+      service: watchtower
+    environment:
+      - TZ=${TZ}
+      - WATCHTOWER_MONITOR_ONLY=${WATCHTOWER_MONITOR_ONLY:-true}
+      - WATCHTOWER_ROLLING_RESTART=${WATCHTOWER_ROLLING_RESTART:-false}
+      - WATCHTOWER_NOTIFICATIONS=${WATCHTOWER_NOTIFICATIONS:-}
+      - WATCHTOWER_NOTIFICATION_URL=${WATCHTOWER_DISCORD_URL:-}
+  
 networks:
   proxy:
     external: true

@@ -42,58 +42,121 @@ Please make sure that all the files and directories are present.
 
 # Information
 
-The following docker-compose is configured to check for update every monday. If you are using the borg-backup [strategy](../borg-backup), everything will be backed-up before the image is updated to prevent data corruption. 
+The following docker-compose is configured to check for updates every Monday at
+04:00. Every other service in this repository opts in with the
+`com.centurylinklabs.watchtower.enable=true` label, so watchtower only ever
+touches services that asked for it. If a service is missing that label, watchtower
+will not update it no matter what.
 
-Watchtower if configured to automatically upgrade your images and to then, send you a notification with [gotify](../gotify). Everything can be changed by modifying the [environnement variables](https://containrrr.dev/watchtower/arguments/).
+It is started from the **root** `docker-compose.yml` (not from this folder), so
+that one `docker compose up -d` brings up the whole stack:
 
-If you want watchtower to only notify you and not upgrade the images, uncomment the following environnement variable in the docker-compose : `- WATCHTOWER_MONITOR_ONLY=true`
+```bash
+docker compose up -d watchtower
+```
+
+Old images are removed after a successful update (`WATCHTOWER_CLEANUP=true`),
+and when several services update in the same run they are recreated one at a time
+(`WATCHTOWER_ROLLING_RESTART=true`) so the stack is never fully down.
+
+## Report-only first
+
+Every image in this stack was over a year out of date, so the first update run
+would have been a very large jump (Sonarr, Radarr, Jellyfin and Traefik all
+migrate their own databases on upgrade). `WATCHTOWER_MONITOR_ONLY=true` makes
+watchtower *report* which images have an update and change nothing:
+
+```bash
+docker logs watchtower | grep -i "found new"
+```
+
+Once you are happy with the list — and have read the release notes of anything
+that migrates a database — switch it off in `.env`:
+
+```ini
+WATCHTOWER_MONITOR_ONLY=false
+WATCHTOWER_ROLLING_RESTART=true
+```
+
+> Watchtower refuses to start when `WATCHTOWER_ROLLING_RESTART` and
+> `WATCHTOWER_MONITOR_ONLY` are both enabled, so the two always go together.
+
+Then recreate it: `docker compose up -d watchtower`.
+
+## Pinning a service to one version
+
+`image: fallenbagel/jellyseerr:latest` style tags will eventually pull a major
+version at you. To freeze a service, change its tag in the root compose (or in
+its own folder's compose) to an explicit version and drop the watchtower label
+from that service.
+
+## Notifications
+
+Notifications go through [shoutrrr](https://containrrr.dev/watchtower/arguments/#notifications),
+so any service it supports works without a code change. The default here is a
+Discord webhook: create one in Discord under *Server Settings → Integrations →
+Webhooks*, then put the URL in `DISCORD_WEBHOOK_URL` in `.env` and set
+`WATCHTOWER_NOTIFICATIONS=shoutrrr`.
 
 ## docker-compose
 Links to the following [docker-compose.yml](docker-compose.yml) and the corresponding [.env](.env).
 
 * docker-compose.yml
   ```yaml
-  version: "3"
-
   services:
     watchtower:
-      image: containrrr/watchtower
+      # Pinned: the `latest` tag is unversioned, and an unpinned auto-updater is
+      # how you end up debugging a surprise major bump. 1.7.1 is the last release.
+      image: containrrr/watchtower:1.7.1
       container_name: watchtower
       restart: unless-stopped
       volumes:
+        # Read-write is required: watchtower has to stop/recreate containers to
+        # apply an update. See the Security note in the README.
         - /var/run/docker.sock:/var/run/docker.sock
+      networks:
+        - proxy
       environment:
-        - WATCHTOWER_CLEANUP=true
-        - WATCHTOWER_LABEL_ENABLE=true
-        #- WATCHTOWER_MONITOR_ONLY=true
-        #- WATCHTOWER_POLL_INTERVAL=30
+        - TZ=${TZ}
         - WATCHTOWER_SCHEDULE=0 0 4 * * MON
-        - WATCHTOWER_NOTIFICATIONS=gotify
-        - WATCHTOWER_NOTIFICATION_GOTIFY_URL=${GOTIFY_URL}
-        - WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN=${GOTIFY_TOKEN}
+        - WATCHTOWER_LABEL_ENABLE=true
+        - WATCHTOWER_CLEANUP=true
+        - WATCHTOWER_ROLLING_RESTART=${WATCHTOWER_ROLLING_RESTART:-false}
+        - WATCHTOWER_LIFECYCLE_HOOKS=true
+        - WATCHTOWER_INCLUDE_STOPPED=false
+        - WATCHTOWER_MONITOR_ONLY=${WATCHTOWER_MONITOR_ONLY:-true}
+        - WATCHTOWER_NOTIFICATIONS=${WATCHTOWER_NOTIFICATIONS:-}
+        - WATCHTOWER_NOTIFICATION_URL=${DISCORD_WEBHOOK_URL:-}
       labels:
         - "com.centurylinklabs.watchtower.enable=true"
+
+  networks:
+    proxy:
+      external: true
   ```
 * .env
   ```ini
-  # The gotify token can be configured in the gotify WebUI
-  GOTIFY_URL=https://gotify.example.com/
-  GOTIFY_TOKEN=xxxxxxxxxxxxxxxxxx
+  # Discord: Server Settings -> Integrations -> Webhooks -> Copy Webhook URL
+  DISCORD_WEBHOOK_URL=
+
+  # true = report only, false = actually update
+  WATCHTOWER_MONITOR_ONLY=true
+  # switch both at the same time, watchtower refuses to run with both on
+  WATCHTOWER_ROLLING_RESTART=false
   ```
 
 # Usage
 
 ## Configuration
 
-If you don't want to use gotify for the notification, feel free to remove the environnement variables from both the `.env` and the `docker-compose.yml` file.
-
-Replace the environment variables in `.env` with your own, then run :
+Edit the `.env` file, then from the repository root run :
 
 ```bash
-sudo docker-compose up -d
+docker compose up -d watchtower
 ```
 
-Watchtower will then check for update every monday and send you a notification with gotify once an image is updated.
+Watchtower will then check for updates every Monday at 04:00 and, once
+`WATCHTOWER_MONITOR_ONLY` is `false`, pull and recreate the opted-in services.
 
 # Update
 
