@@ -21,3 +21,8 @@ acme.json
 # private keys anywhere
 *.pem
 *.key
+
+# Service databases & runtime data (never commit)
+vaultwarden/data/
+uptime-kuma/data/
+pihole/etc-pihole/pihole.toml

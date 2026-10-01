@@ -16,7 +16,7 @@ services:
       # - "8443:443/tcp"
     environment:
       TZ:  ${TZ}
-      FTLCONF_webserver_api_password: ${PASSWORD}
+      # FTLCONF_webserver_api_password removed - use `docker exec pihole pihole setpassword` instead
       FTLCONF_dns_listeningMode: 'all'
     volumes:
       - './etc-pihole:/etc/pihole'
