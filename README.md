@@ -2,8 +2,6 @@
 <img src="_utilities/docker.png" width="400" alt="docker" title="docker" />
 </p>
 
-Guide with examples !
-
 > 📘 **New here?** Read the **[Home Server Guide](HOME-SERVER-GUIDE.md)** — the
 > whole setup explained in plain English, plus a per-service table and
 > troubleshooting cheatsheet.
@@ -12,26 +10,21 @@ Guide with examples !
 
 * [pihole](pihole/) - network-wide ad blocker (your DNS / phone book)
 * [traefik](traefik/) - reverse proxy and SSL manager
-* [borg-backup](borg-backup/) - backup scripts (local and AWS)
-* [fail2ban](fail2ban/) - security tool (ban IP)
-* [freshrss](freshrss/) - RSS feed aggregator
-* [gotify](gotify/) - notification service
-* [jellyfin](jellyfin/) - media System
-* [nextcloud](nextcloud/) - file-hosting software system
-* [seafile](seafile/) - file-hosting software system
-* [synapse-element](synapse-element/) - decentralised communication system
-* [transmission](transmission/) - fast, easy, and free BitTorrent client
-* [trilium](trilium/) - hierarchical note-taking application
-* [vaultwarden](vaultwarden/) - password manager
-* [watchtower](watchtower/) - automatic docker images update
-* [webserver](webserver/) - simple apache webserver
-* [wireguard-pihole-unbound](wireguard-pihole-unbound/) - combination of WireGuard, PiHole, and Unbound
-* [wordpress](wordpress/) - blogging tool with a content management system (CMS)
-
+* [jellyfin](jellyfin/) - media system (your personal Netflix)
+* [jellyseer](jellyseer/) - media request page (runs Seerr)
+* [prowlarr](prowlarr/) - indexer manager for the *arr apps
+* [radarr](radarr/) - movie collection manager
+* [sonarr](sonarr/) - TV show collection manager
+* [bazarr](bazarr/) - subtitle manager
+* [qbittorrent](qbittorrent/) - torrent client
+* [vaultwarden](vaultwarden/) - self-hosted password manager
+* [uptime-kuma](uptime-kuma/) - monitoring and status pages
+* [transmission](transmission/) - alternative torrent client (not currently running)
+* [watchtower](watchtower/) - automatic docker image updates
 
 # Information
 
-The overall guide is centered around example. Each of the services is tied with either a docker-compose or a script, everything has been made so that each service is almost ready to use, only a few user-specific variable are required.
+The overall guide is centered around examples. Each of the services is tied with either a docker-compose or a script, everything has been made so that each service is almost ready to use, only a few user-specific variables are required.
 
 All services respect a certain format :
 
@@ -41,9 +34,29 @@ All services respect a certain format :
 - **Information** - detailed information about the service and the example
 - **Usage** - required configuration and commands to use the service
 - **Update** - how to update the container, most of the time it is using watchtower
-- **Backup** - how to back up the container, most of the time it is using borg-backup
+- **Backup** - how to back up the container, most of the time it is using a manual tar backup
 
 Traefik is the core of this setup as it is the reverse proxy, it should be one of the first services to configure and use.
+
+# Structure
+
+The root `docker-compose.yml` ties the main stack together with `extends` — each
+service keeps its own `docker-compose.yml` in its folder, and the root file
+re-states the things `extends` cannot carry over (e.g. `depends_on`, and
+top-level `.env` variables).
+
+```
+home-server/
+├── docker-compose.yml      # root stack: traefik + socket-proxy + all services
+├── .env                    # domain, Cloudflare key, timezone, URLs (gitignored)
+├── traefik/  pihole/  jellyfin/  jellyseer/  prowlarr/  radarr/
+├── sonarr/  bazarr/  qbittorrent/  vaultwarden/  uptime-kuma/
+├── transmission/           # alternative downloader (not in root stack)
+└── watchtower/             # auto-updater
+```
+
+Services started outside the root stack (run them from their own folder with
+`docker compose up -d`): **pihole** and **transmission**.
 
 # Requirement
 
@@ -52,35 +65,36 @@ Each guide gives links to the official documentation, they are usually well writ
 
 On the technical side :
 
-* docker and docker-compose (1.X) are required, the installation process is fairly easy.
+* docker and docker-compose (v2) are required, the installation process is fairly easy.
 * a domain, some can be found for free but most are usually pretty cheap.
 
 # Usage
 
-All the docker-compose provided in this repository are ready to be used, and you should not have to touch them. The only thing you need to change are the `.env` file provided with the docker-compose, they are user-specific.
-
-To begin with, you can clone this repository on your host.
-
-```bash
-git clone https://github.com/BaptisteBdn/docker-selfhosted-apps.git
-```
-
-Provided you already have a domain, you can use the following commands to update all `.env` at once as well as some specific config files.
+The root `docker-compose.yml` brings up the main stack (Traefik, socket-proxy,
+Jellyfin, the *arr crew, qBittorrent, Vaultwarden, Uptime Kuma, Watchtower):
 
 ```bash
-DOMAIN=your-domain.com
-find ./ \( -name ".env" -or -name "*.yml" -or -name "*.json" \) -type f -exec sed -i 's/example.com/'$DOMAIN'/g' {} \;
+docker network create proxy   # one-time, shared with every service
+docker compose up -d
 ```
 
-You can now go forward and try whatever service you want, every example as a `# Usage` section to guide you through the process. However, as most of them are using Traefik, it is recommended to set this one first.
+Pi-hole and Transmission have their own stack:
+
+```bash
+cd pihole && docker compose up -d && cd ..
+```
+
+All user-specific configuration (domain, Cloudflare API key, timezone, service
+URLs, Discord webhooks) lives in the gitignored `.env` files — check
+`.env` at the root and in each service folder.
 
 # Other
 
 ## Docker and UFW
 
-UFW is a popular iptables front end on Ubuntu that makes it easy to manage firewall rules. But when Docker is installed, Docker bypass the UFW rules and the published ports can be accessed from outside.
+UFW is a popular iptables front end on Ubuntu that makes it easy to manage firewall rules. But when Docker is installed, Docker bypasses the UFW rules and the published ports can be accessed from outside.
 
-An [easy fix](https://github.com/chaifeng/ufw-docker) is available, allowing to easily manage your firewall. As most of the services are going through Traefik, only the port 443 is mandatory. If another port is required, it will be listed in the requirements.
+An [easy fix](https://github.com/chaifeng/ufw-docker) is available, allowing to easily manage your firewall. As most of the services are going through Traefik, only ports 80 and 443 are mandatory. If another port is required, it will be listed in the requirements.
 
 ## Docker tips
 
@@ -95,34 +109,37 @@ An [easy fix](https://github.com/chaifeng/ufw-docker) is available, allowing to 
 
 ## Docker images
 
-Most images are used with the tag `latest` as it simplify the testing. It is usually not recommended running an image with this tag as it is not very dynamic and precise.
-Feel free to experiment with the provided docker-compose examples and then use a better versionning system. For more information about [latest](https://vsupalov.com/docker-latest-tag/).
+Most images are used with the tag `latest` as it simplifies testing. It is usually not recommended running an image with this tag as it is not very dynamic and precise.
+Feel free to experiment with the provided docker-compose examples and then use a better versioning system. For more information about [latest](https://vsupalov.com/docker-latest-tag/).
 
 ## Updating docker images
 
-This repository images are automatically updated with watchtower, however this can be a security risk. More details in the [watchtower guide](watchtower).
+This repository's images are automatically updated with watchtower (Mondays 04:00,
+Discord notifications on changes). More details in the [watchtower guide](watchtower/)
+and the [Home Server Guide](HOME-SERVER-GUIDE.md). Controlled by `.env`:
+`WATCHTOWER_MONITOR_ONLY` (report-only vs apply) and `WATCHTOWER_ROLLING_RESTART`.
 
 If you want to manually update an image, you can use docker-compose.
 
 * Update all images for a specific docker-compose file
     ```
-    sudo docker-compose pull
+    docker compose pull
     ```
 * Update a single image
     ```
-    sudo docker-compose pull image-name
+    docker compose pull image-name
     ```
 * Recreate all updated containers with docker-compose
     ```
-    sudo docker-compose up -d
+    docker compose up -d
     ```
 * Recreate a single container with docker-compose
     ```
-    sudo docker-compose up -d container-name
+    docker compose up -d container-name
     ```
 * Remove all dangling and unused images
     ```
-    sudo docker image prune  -a
+    docker image prune -a
     ```
 
 ## Docker tools
@@ -137,10 +154,10 @@ Some useful tools to manage your private docker infrastructure.
 
 A compilation of resources mainly focus on security.
 
-- [CIS Docker 1.13.0 Benchmark](https://downloads.cisecurity.org/#/) - provides prescriptive guidance for establishing a secure configuration posture for Docker
+- [CIS Docker Benchmark](https://www.cisecurity.org/benchmark/docker) - provides prescriptive guidance for establishing a secure configuration posture for Docker
 - [Docker security](https://docs.docker.com/engine/security/) - official docker documentation about security
 - [Docker security OWASP](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html) - OWASP security cheat sheet
 
 # Credits
 
-This guide is inspired from [@DoTheEvo](https://github.com/DoTheEvo/selfhosted-apps-docker) own docker guide, built with caddy at its core, check it out !
+This guide was originally inspired by [@DoTheEvo](https://github.com/DoTheEvo/selfhosted-apps-docker) own docker guide, built with caddy at its core, check it out !
