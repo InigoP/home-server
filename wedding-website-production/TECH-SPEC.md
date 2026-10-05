@@ -176,15 +176,53 @@ Self-hosted approach chosen:
 
 ---
 
-## 10. Next Steps
+## 10. Current Status
 
-1. Scaffold Next.js app in this folder.
-2. Install Tailwind CSS + Framer Motion + better-sqlite3.
-3. Create RSVP API route + SQLite schema.
-4. Build core pages/components.
-5. Add Dockerfile + docker-compose.yml.
-6. Wire into Traefik with a subdomain.
-7. Test locally, then deploy.
+### Done
+- [x] Self-hosted on existing home server
+- [x] Next.js + Tailwind + Framer Motion stack scaffolded
+- [x] RSVP API (`/api/rsvp`) with SQLite storage
+- [x] RSVP form page (`/rsvp`) — name, email, attending, welcome party, dietary
+- [x] Buffet service — **meal selection removed** from form, API, and schema
+- [x] Google Sheets sync via Apps Script webhook (appended rows on each RSVP)
+- [x] Dockerized with production Dockerfile + standalone output
+- [x] Traefik routing + Let's Encrypt HTTPS at `soniainigo.pingu93.com`
+- [x] Admin view removed (replaced by Google Sheets export)
+- [x] Basic site framework — Nav, Hero, Events, Accommodations, Gallery, FAQ placeholders
+- [x] Homepage set to Sonia & Inigo, June 7 2026, La Toundra, Montréal structure
+- [x] Staging environment (`staging-website` container, `staging.soniainigo.pingu93.com`)
+- [x] Manual deploy scripts:
+      - `wedding-website-production/deploy-staging.sh`
+      - `wedding-website-production/deploy-prod.sh`
+- [x] Git branch flow: `develop` → staging, `master` → production
+- [x] Refactored folder layout:
+      - `wedding-website-production/`
+      - `wedding-website-staging/` (mirror of develop branch)
+- [x] Pushed to GitHub repo (`github.com/InigoP/home-server`)
+
+### Still To Do
+- [ ] Replace placeholder content with real details (registry links, venue map, FAQ answers, hotel rates)
+- [ ] Add wedding date/time countdown on homepage
+- [ ] Choose final site styling/fonts and add real photography
+- [ ] Decide whether to keep `welcome_party` as yes/no RSVP field or change wording
+- [ ] Add rehearsal dinner/brunch as separate RSVP or keep as simple info page
+- [ ] Consider optional plus-one count, song request, or guest message fields
+- [ ] Set real `RSVP_ADMIN_TOKEN` (currently defaults to `changeme` in .env)
+- [ ] Secure/restrict who can see the RSVP Google Sheet
+- [ ] Backup plan for SQLite DB and Google Sheet copy
+- [ ] Decide on domain strategy long-term (new root domain vs subdomain of pingu93.com)
+- [ ] Optional: guest photo upload / gallery moderation
+- [ ] Optional: interactive map, hotel cards with real links, countdown timer
+
+---
+
+## 11. Next Steps
+
+1. Fill in real content in the existing pages.
+2. Test RSVP submission on staging, verify Google Sheet receives the row.
+3. Update placeholder cards/events with La Toundra details.
+4. Once happy, merge `develop` → `master` and run `deploy-prod.sh`.
+5. Decide on long-term domain and any extra features.
 
 ---
 
