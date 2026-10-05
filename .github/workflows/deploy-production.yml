@@ -6,17 +6,11 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-      - name: Deploy to production via SSH
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
-          script: |
-            set -e
-            cd ~/home-server
-            git pull origin master
-            docker compose up -d --build wedding-website
+      - name: Deploy to production
+        run: |
+          set -e
+          cd ~/home-server
+          git pull origin master
+          docker compose up -d --build wedding-website

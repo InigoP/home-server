@@ -6,17 +6,11 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-      - name: Deploy to staging via SSH
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
-          script: |
-            set -e
-            cd ~/home-server-staging
-            git pull origin develop
-            docker compose up -d --build staging-website
+      - name: Deploy to staging
+        run: |
+          set -e
+          cd ~/home-server-staging
+          git pull origin develop
+          docker compose up -d --build staging-website
