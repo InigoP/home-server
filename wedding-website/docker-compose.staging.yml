@@ -1,0 +1,23 @@
+services:
+  staging-website:
+    build: .
+    container_name: staging-website
+    restart: unless-stopped
+    environment:
+      - RSVP_ADMIN_TOKEN=${RSVP_ADMIN_TOKEN:-changeme}
+      - GOOGLE_SHEET_WEBHOOK_URL=${GOOGLE_SHEET_WEBHOOK_URL:-}
+    volumes:
+      - ./data-staging:/app/data
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wedding-staging.rule=Host(`staging.soniainigo.pingu93.com`)"
+      - "traefik.http.routers.wedding-staging.entrypoints=https"
+      - "traefik.http.routers.wedding-staging.tls=true"
+      - "traefik.http.routers.wedding-staging.tls.certresolver=mydnschallenge"
+      - "traefik.http.services.wedding-staging.loadbalancer.server.port=3000"
+
+networks:
+  proxy:
+    external: true
