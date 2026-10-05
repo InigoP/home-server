@@ -96,7 +96,7 @@ services:
 
   wedding-website:
     extends:
-      file: ./wedding-website/docker-compose.yml
+      file: ./wedding-website-production/docker-compose.yml
       service: wedding-website
     depends_on:
       traefik:
@@ -104,7 +104,7 @@ services:
 
   staging-website:
     extends:
-      file: ./wedding-website/docker-compose.staging.yml
+      file: ./wedding-website-staging/docker-compose.staging.yml
       service: staging-website
 
   # NOTE: `extends` resolves `${VAR}` in the sub-file against this project's
