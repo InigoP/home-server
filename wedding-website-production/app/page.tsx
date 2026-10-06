@@ -2,6 +2,7 @@ import Hero from "@/components/Hero";
 import Events from "@/components/Events";
 import Accommodations from "@/components/Accommodations";
 import Gallery from "@/components/Gallery";
+import ScrollAsset from "@/components/ScrollAsset";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <Events />
       <Accommodations />
       <Gallery />
+      <ScrollAsset />
     </main>
   );
 }
