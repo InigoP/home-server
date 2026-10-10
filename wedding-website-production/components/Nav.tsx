@@ -10,12 +10,14 @@ export default function Nav() {
     { href: "/rsvp", label: "RSVP" },
   ];
   return (
-    <nav className="flex flex-wrap justify-center gap-6 border-b border-stone-200 py-4 text-sm text-stone-600">
-      {links.map((l) => (
-        <Link key={l.href} href={l.href} className="hover:text-stone-900 transition-colors">
-          {l.label}
-        </Link>
-      ))}
+    <nav className="sticky top-0 z-50 border-b-4 border-[#020202] bg-[#111]">
+      <div className="flex flex-wrap justify-center gap-6 py-4 text-xs font-bold uppercase tracking-[0.25em] text-[#FAD200]">
+        {links.map((l) => (
+          <Link key={l.href} href={l.href} className="hover:text-[#ED2232] transition-colors">
+            {l.label}
+          </Link>
+        ))}
+      </div>
     </nav>
   );
 }

@@ -191,9 +191,9 @@ Self-hosted approach chosen:
 - [x] Basic site framework — Nav, Hero, Events, Accommodations, Gallery, FAQ placeholders
 - [x] Homepage set to Sonia & Inigo, June 7 2026, La Toundra, Montréal structure
 - [x] Staging environment (`staging-website` container, `staging.soniainigo.pingu93.com`)
-- [x] Manual deploy scripts:
-      - `wedding-website-production/deploy-staging.sh`
-      - `wedding-website-production/deploy-prod.sh`
+- [x] Manual deploy scripts (kept in `scripts/` at the repo root so they are not copied into the generated staging folder):
+      - `scripts/deploy-staging.sh`
+      - `scripts/deploy-prod.sh`
 - [x] Git branch flow: `develop` → staging, `master` → production
 - [x] Refactored folder layout:
       - `wedding-website-production/`
@@ -221,7 +221,7 @@ Self-hosted approach chosen:
 1. Fill in real content in the existing pages.
 2. Test RSVP submission on staging, verify Google Sheet receives the row.
 3. Update placeholder cards/events with La Toundra details.
-4. Once happy, merge `develop` → `master` and run `deploy-prod.sh`.
+4. Once happy, merge `develop` → `master` and run `scripts/deploy-prod.sh`.
 5. Decide on long-term domain and any extra features.
 
 ---

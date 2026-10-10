@@ -29,37 +29,37 @@ export default function RsvpPage() {
   }
 
   return (
-    <main className="min-h-screen bg-stone-50 flex items-center justify-center p-6">
+    <main className="min-h-screen bg-white flex items-center justify-center p-6">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white rounded-2xl shadow p-8 flex flex-col gap-4"
+        className="w-full max-w-md border-2 border-[#020202] bg-white p-8 flex flex-col gap-4"
       >
-        <h1 className="text-3xl font-semibold text-stone-800">RSVP</h1>
+        <h1 className="text-xs uppercase tracking-[0.5em] text-[#444]">RSVP</h1>
 
         <label className="flex flex-col gap-1">
-          <span className="text-sm text-stone-600">Name</span>
+          <span className="text-sm text-[#444]">Name</span>
           <input
             required
-            className="border border-stone-300 rounded-lg px-3 py-2"
+            className="border-2 border-[#020202] bg-white px-3 py-2 text-[#020202]"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="text-sm text-stone-600">Email</span>
+          <span className="text-sm text-[#444]">Email</span>
           <input
             type="email"
-            className="border border-stone-300 rounded-lg px-3 py-2"
+            className="border-2 border-[#020202] bg-white px-3 py-2 text-[#020202]"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="text-sm text-stone-600">Attending</span>
+          <span className="text-sm text-[#444]">Attending</span>
           <select
-            className="border border-stone-300 rounded-lg px-3 py-2"
+            className="border-2 border-[#020202] bg-white px-3 py-2 text-[#020202]"
             value={form.attending}
             onChange={(e) => setForm({ ...form, attending: e.target.value })}
           >
@@ -69,9 +69,9 @@ export default function RsvpPage() {
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="text-sm text-stone-600">Attending welcome party?</span>
+          <span className="text-sm text-[#444]">Attending welcome party?</span>
           <select
-            className="border border-stone-300 rounded-lg px-3 py-2"
+            className="border-2 border-[#020202] bg-white px-3 py-2 text-[#020202]"
             value={form.welcome_party}
             onChange={(e) => setForm({ ...form, welcome_party: e.target.value })}
           >
@@ -81,9 +81,9 @@ export default function RsvpPage() {
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="text-sm text-stone-600">Dietary restrictions</span>
+          <span className="text-sm text-[#444]">Dietary restrictions</span>
           <input
-            className="border border-stone-300 rounded-lg px-3 py-2"
+            className="border-2 border-[#020202] bg-white px-3 py-2 text-[#020202]"
             value={form.dietary}
             onChange={(e) => setForm({ ...form, dietary: e.target.value })}
           />
@@ -92,7 +92,7 @@ export default function RsvpPage() {
         <button
           type="submit"
           disabled={status === "saving"}
-          className="bg-stone-800 text-white rounded-lg py-2.5 hover:bg-stone-700 transition-colors"
+          className="border-2 border-[#020202] bg-[#ED2232] text-white py-2.5 font-bold uppercase tracking-[0.2em] hover:bg-[#e01f7c] transition-colors"
         >
           {status === "saving" ? "Saving..." : "Submit RSVP"}
         </button>

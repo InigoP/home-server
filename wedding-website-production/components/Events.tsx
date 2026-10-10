@@ -7,14 +7,14 @@ const events = [
 export default function Events() {
   return (
     <section className="max-w-4xl mx-auto px-6 py-16">
-      <h2 className="text-3xl font-serif text-stone-800 text-center">Events</h2>
+      <h2 className="text-center text-xs uppercase tracking-[0.5em] text-[#020202]">Events</h2>
       <div className="mt-10 grid gap-6 sm:grid-cols-3">
         {events.map((e) => (
-          <div key={e.title} className="rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-stone-800">{e.title}</h3>
-            <p className="mt-2 text-sm text-stone-600">{e.date}</p>
-            <p className="text-sm text-stone-600">{e.place}</p>
-            <p className="mt-3 text-sm text-stone-500">{e.desc}</p>
+          <div key={e.title} className="border-2 border-[#020202] bg-white p-6">
+            <h3 className="text-lg font-semibold text-[#020202]">{e.title}</h3>
+            <p className="mt-2 text-sm text-[#444]">{e.date}</p>
+            <p className="text-sm text-[#444]">{e.place}</p>
+            <p className="mt-3 text-sm text-[#777]">{e.desc}</p>
           </div>
         ))}
       </div>
