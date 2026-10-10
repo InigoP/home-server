@@ -9,8 +9,8 @@ export default function Hero() {
       </div>
       <div>
         <p className="inline-block rotate-[-2deg] border-2 border-[#020202] bg-white px-4 py-1 text-xs font-bold uppercase tracking-[0.5em]">Save the date</p>
-        <h1 className="mt-8 font-display text-6xl md:text-8xl uppercase leading-none tracking-tight text-[#020202]">
-          Sonia<br />&amp; <span className="bg-[#ED2232] text-white px-3">Inigo</span>
+        <h1 className="mt-8 font-display text-6xl md:text-8xl uppercase leading-[1.1] tracking-tight text-[#020202]">
+          Sonia<br />&amp; Inigo
         </h1>
         <p className="mt-6 text-sm font-bold uppercase tracking-[0.3em] text-[#020202]">Sunday, June 7, 2026 · La Toundra, Montréal</p>
         <FlipLink

@@ -13,7 +13,7 @@ export default function ScrollAsset() {
 
   return (
     <div
-      className="pointer-events-none fixed bottom-10 left-16 z-10 transition-transform duration-100"
+      className="pointer-events-none fixed bottom-10 left-1/7 z-10 transition-transform duration-100"
       style={{ transform: `translateY(-${offset}px)` }}
       aria-hidden
     >
