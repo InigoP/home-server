@@ -101,22 +101,38 @@ Reasons:
 
 ---
 
-## 5. Suggested Folder Structure
+## 5. Folder Structure
+
+The Next.js app lives in `wedding-website-production/` at the root of the
+`home-server` repo. `wedding-website-staging/` is a **generated mirror** of the
+`develop` branch — never edit it, `scripts/deploy-staging.sh` recreates it on
+every deploy (see §11).
 
 ```
-wedding-website/
-├── app/
-│   ├── page.tsx
-│   ├── rsvp/page.tsx
-│   ├── schedule/page.tsx
-│   └── api/rsvp/route.ts
-├── components/
-├── public/
-├── data/               # SQLite db (mounted volume)
-├── Dockerfile
-├── docker-compose.yml
-├── package.json
-└── tailwind.config.ts
+home-server/
+├── scripts/
+│   ├── deploy-staging.sh     # develop → wedding-website-staging/ → staging container
+│   └── deploy-prod.sh        # develop → master → production container
+├── wedding-website-production/            # app source (git-tracked)
+│   ├── app/
+│   │   ├── layout.tsx        # loads Anton + VT323, sets the palette
+│   │   ├── template.tsx      # wraps every page in the page-wipe transition
+│   │   ├── globals.css       # Tailwind import, palette, grain, curtain animation
+│   │   ├── page.tsx
+│   │   ├── faq/ registry/ rsvp/ schedule/ venue/
+│   │   └── api/rsvp/route.ts
+│   ├── components/
+│   │   ├── Reveal.tsx        # framer-motion scroll-in reveal
+│   │   ├── ScrollAsset.tsx   # floating photostrip
+│   │   └── Hero/Events/Accommodations/Gallery/Nav/FlipLink
+│   ├── public/               # static assets, incl. photostrip.jpg
+│   ├── data/                 # SQLite db (local dev; bind mount in prod)
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── package.json
+└── wedding-website-staging/               # generated, git-ignored
+    ├── data-staging/                      # staging RSVP db — survives redeploys
+    └── (mirror of wedding-website-production/)
 ```
 
 ---
@@ -199,6 +215,15 @@ Self-hosted approach chosen:
       - `wedding-website-production/`
       - `wedding-website-staging/` (mirror of develop branch)
 - [x] Pushed to GitHub repo (`github.com/InigoP/home-server`)
+- [x] Full visual redesign in the neo-brutalist style: Anton + VT323 fonts,
+      red `#ED2232` on black/white, film-grain texture, hard 2px borders,
+      red curtain page transition (`app/template.tsx` + `.page-wipe`), scroll
+      reveals (`components/Reveal.tsx`), `prefers-reduced-motion` support
+- [x] Floating photostrip asset (`public/photostrip.jpg`, converted from the
+      iPhone `.HEIC` original) — `components/ScrollAsset.tsx`, rises from the
+      bottom-left at 45% of scroll speed with a 100ms transition
+- [x] Both site containers managed from the root `home-server` compose project
+- [x] Deploy scripts hardened — see §11
 
 ### Still To Do
 - [ ] Replace placeholder content with real details (registry links, venue map, FAQ answers, hotel rates)
@@ -216,7 +241,98 @@ Self-hosted approach chosen:
 
 ---
 
-## 11. Next Steps
+## 11. Deployment Workflow
+
+Both sites run from the **root `home-server` compose project**. The root
+`docker-compose.yml` pulls in each service with `extends`, so the subfolder
+compose files are fragments — never run `docker compose` from inside
+`wedding-website-production/` or `wedding-website-staging/`, or you will get a
+second copy of the same service under a different project name.
+
+Branch flow: `develop` → staging, `master` → production.
+
+### Deploying to staging
+
+```bash
+~/home-server/scripts/deploy-staging.sh
+```
+
+What it does, and why:
+
+1. **`git fetch origin develop`** — fetch only, never merge. An earlier version
+   used `git pull origin develop`, which merges `develop` into whatever branch
+   is checked out; because `deploy-prod.sh` leaves the repo on `master`, that
+   silently merged `develop` into `master`.
+2. **Extracts `origin/develop:wedding-website-production`** into
+   `wedding-website-staging/` via `git archive`, then `rsync --delete`s it into
+   place. The wipe means files deleted or renamed upstream cannot linger in
+   staging. `--exclude data-staging/` keeps the staging RSVP database, which is
+   a bind mount and would otherwise be lost on every deploy.
+3. **Removes any existing container named `staging-website`** before starting
+   the new one. Both compose projects declare that `container_name`, so a
+   container left behind by the wrong project would otherwise block the deploy
+   with a name conflict.
+4. **`docker compose up -d --build staging-website`** from the repo root.
+
+### Deploying to production
+
+```bash
+~/home-server/scripts/deploy-prod.sh
+```
+
+Fetches, checks out `master`, merges `origin/develop`, pushes `master`, then
+rebuilds the `wedding-website` container.
+
+### Why the scripts live in `scripts/`
+
+`wedding-website-staging/` is regenerated from `wedding-website-production/` on
+every staging deploy. When the deploy scripts lived in
+`wedding-website-production/`, each staging deploy copied a second copy into
+`wedding-website-staging/`, so the scripts appeared twice and any edit to the
+staging copy was silently discarded on the next deploy. They now live once, at
+`scripts/`, alongside the health-check scripts.
+
+### Adding static assets
+
+Put the file in `wedding-website-production/public/` and it is served from the
+site root — `public/photostrip.jpg` → `https://<host>/photostrip.jpg`. Then
+commit and deploy; the file is baked into the image at build time, there is no
+runtime upload.
+
+Keep image formats web-friendly. The photostrip arrived as an iPhone `.HEIC`,
+which browsers outside Safari cannot display — it was converted to `.jpg`
+before being committed.
+
+### Previewing without deploying
+
+Node is not installed on the host, so the dev server runs in Docker using the
+app's own `node:20` image:
+
+```bash
+docker build --target deps -t wedding-dev-deps ~/home-server/wedding-website-production
+
+docker run -d --name wedding-dev -p 3000:3000 \
+  -v ~/home-server/wedding-website-production:/app \
+  -v /app/node_modules \
+  -v /tmp/opencode/dev-data:/app/data \
+  -e RSVP_ADMIN_TOKEN=devtoken \
+  wedding-dev-deps npm run dev -- -H 0.0.0.0
+```
+
+Then open <http://localhost:3000>. Edits to the mounted source hot-reload.
+The anonymous `/app/node_modules` volume keeps the image's installed
+dependencies while the bind mount supplies the code, and the temp dir at
+`/app/data` keeps dev RSVP data out of the real database.
+
+Clean up with `docker rm -f wedding-dev && docker rmi wedding-dev-deps`.
+
+> **Warning:** if a redesign is in progress on staging but *not* committed to
+> `develop`, a staging deploy will overwrite it. Work in
+> `wedding-website-production/`, or commit before deploying.
+
+---
+
+## 12. Next Steps
 
 1. Fill in real content in the existing pages.
 2. Test RSVP submission on staging, verify Google Sheet receives the row.

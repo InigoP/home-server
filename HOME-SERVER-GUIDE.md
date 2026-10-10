@@ -132,6 +132,8 @@ Two helpers make this safe:
 | `https://qbit.pingu93.com` | **qBittorrent** | The actual downloader (torrent client) | `qbittorrent/` | ✅ |
 | — | **Watchtower** | Update babysitter: every Monday 04:00 it checks the other boxes for new versions | `watchtower/` | ✅ |
 | `https://...` | **Transmission** | An alternative torrent client, present but not currently running | `transmission/` | ❌ own folder |
+| `https://soniainigo.pingu93.com` | **Wedding site** | The wedding website (guest info + RSVP form) | `wedding-website-production/` | ✅ |
+| `https://staging.soniainigo.pingu93.com` | **Wedding site (staging)** | Test copy of the wedding website, rebuilt from `develop` | `wedding-website-staging/` | ✅ |
 
 > Services marked ❌ are started from their own folder
 > (`cd pihole && docker compose up -d`), because the root `docker-compose.yml`
@@ -268,6 +270,31 @@ docker ps                     # confirm what's running
 docker compose down            # stops and removes the boxes (data stays in volumes)
 ```
 
+### Deploy the wedding website
+
+The wedding site is the one service that is **built from source in this repo**
+rather than pulled from a registry, so it has its own deploy scripts in
+`scripts/`:
+
+```bash
+scripts/deploy-staging.sh   # rebuild staging from the develop branch
+scripts/deploy-prod.sh      # merge develop → master, rebuild production
+```
+
+Both run from the repo root and manage the containers through the root
+`docker-compose.yml`. `wedding-website-staging/` is a generated mirror of the
+`develop` branch — it is wiped and recreated on each staging deploy (except
+`data-staging/`, which holds the staging RSVP database), so never edit files
+there. `wedding-website-production/` is the source of truth and is what you
+edit.
+
+> ⚠️ Commit your work to `develop` before deploying. Anything edited only inside
+> `wedding-website-staging/` is lost on the next staging deploy.
+
+Details, including how to preview changes on `localhost:3000` without
+deploying, are in
+[wedding-website-production/TECH-SPEC.md](wedding-website-production/TECH-SPEC.md#11-deployment-workflow).
+
 ### See what's happening
 
 ```bash
@@ -368,7 +395,12 @@ home-server/
 ├── bazarr/                 # subtitles
 ├── qbittorrent/            # downloader
 ├── transmission/           # alternative downloader (not in root stack)
+├── vaultwarden/            # password manager
+├── uptime-kuma/            # uptime monitoring
 ├── watchtower/             # auto-updater (in root stack; .env holds the Discord webhook)
+├── scripts/                # deploy + health-check scripts
+├── wedding-website-production/   # wedding site source (git-tracked)
+├── wedding-website-staging/      # generated from develop — do not edit
 └── _utilities/             # logos/icons used in the docs
 ```
 

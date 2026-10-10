@@ -49,14 +49,40 @@ top-level `.env` variables).
 home-server/
 ├── docker-compose.yml      # root stack: traefik + socket-proxy + all services
 ├── .env                    # domain, Cloudflare key, timezone, URLs (gitignored)
+├── scripts/                # deploy + health-check scripts (see below)
 ├── traefik/  pihole/  jellyfin/  jellyseer/  prowlarr/  radarr/
 ├── sonarr/  bazarr/  qbittorrent/  vaultwarden/  uptime-kuma/
 ├── transmission/           # alternative downloader (not in root stack)
-└── watchtower/             # auto-updater
+├── watchtower/             # auto-updater
+├── wedding-website-production/   # wedding site source (git-tracked)
+└── wedding-website-staging/      # generated from develop — do not edit
 ```
 
 Services started outside the root stack (run them from their own folder with
 `docker compose up -d`): **pihole** and **transmission**.
+
+## Wedding website
+
+The wedding site is part of the root stack as two services —
+`wedding-website` (production) and `staging-website` — both defined via
+`extends` in the root `docker-compose.yml`.
+
+`wedding-website-production/` holds the source; `wedding-website-staging/` is a
+**generated mirror** of the `develop` branch and is git-ignored. Never edit
+either compose file directly or run `docker compose` from inside those folders —
+that creates a duplicate service under a separate compose project, which then
+collides on `container_name` with the real one.
+
+Deploy with the scripts in `scripts/` (they live at the repo root precisely so
+they are not copied into the generated staging folder):
+
+```bash
+scripts/deploy-staging.sh   # develop → staging.soniainigo.pingu93.com
+scripts/deploy-prod.sh      # develop → master → soniainigo.pingu93.com
+```
+
+See [wedding-website-production/TECH-SPEC.md](wedding-website-production/TECH-SPEC.md)
+for the full deployment workflow, folder layout, and how to preview locally.
 
 # Requirement
 
