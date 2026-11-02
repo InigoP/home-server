@@ -5,18 +5,244 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sonia & Inigo — Save the Date</title>
   <style>
-    body { font-family: Georgia, serif; background: #f5f0eb; color: #3b3b3b; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
-    .card { padding: 3rem; max-width: 600px; }
-    h1 { font-size: 3rem; margin-bottom: 1rem; }
-    p { font-size: 1.2rem; line-height: 1.6; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Georgia, serif;
+      background: #f5f0eb;
+      color: #3b3b3b;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+
+    .card {
+      max-width: 540px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: normal;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .details {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #555;
+      margin-bottom: 2.5rem;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #c9bfb5;
+      margin: 2.5rem 0;
+    }
+
+    .form-heading {
+      font-size: 0.75rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-subheading {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 1.75rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      text-align: left;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    label span {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    input {
+      border: 1px solid #c9bfb5;
+      background: #fff;
+      padding: 0.6rem 0.75rem;
+      font-family: Georgia, serif;
+      font-size: 1rem;
+      color: #3b3b3b;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus { border-color: #3b3b3b; }
+
+    .row {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .row label:first-child { flex: 1; }
+    .row label:last-child { width: 7rem; }
+
+    .row-zip-country { display: flex; gap: 0.75rem; }
+    .row-zip-country label:first-child { width: 8rem; }
+    .row-zip-country label:last-child { flex: 1; }
+
+    button {
+      margin-top: 0.5rem;
+      padding: 0.85rem;
+      background: #3b3b3b;
+      color: #f5f0eb;
+      border: none;
+      font-family: Georgia, serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    button:hover { background: #1a1a1a; }
+    button:disabled { background: #aaa; cursor: default; }
+
+    .message {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    .message.success { color: #4a7c59; }
+    .message.error { color: #c0392b; }
+
+    .thank-you {
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      color: #555;
+      line-height: 1.7;
+    }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>Sonia & Inigo</h1>
-    <p><strong>Save the Date</strong></p>
-    <p>June 7, 2026 · La Toundra, Montréal</p>
-    <p>Full website coming soon!</p>
+    <p class="eyebrow">Save the Date</p>
+    <h1>Sonia &amp; Inigo</h1>
+    <div class="details">
+      <p>June 7, 2026</p>
+      <p>Pavillon de la Jamaïque, Montréal</p>
+    </div>
+
+    <hr class="divider" />
+
+    <div id="form-section">
+      <p class="form-heading">Your Address</p>
+      <p class="form-subheading">Share your mailing address so we can send your invitation.</p>
+
+      <form id="address-form">
+        <div class="row">
+          <label>
+            <span>First name</span>
+            <input type="text" name="first_name" required />
+          </label>
+          <label>
+            <span>Last name</span>
+            <input type="text" name="last_name" required />
+          </label>
+        </div>
+
+        <label>
+          <span>Address line 1</span>
+          <input type="text" name="address1" required />
+        </label>
+
+        <label>
+          <span>Address line 2 (optional)</span>
+          <input type="text" name="address2" />
+        </label>
+
+        <div class="row">
+          <label>
+            <span>City</span>
+            <input type="text" name="city" required />
+          </label>
+          <label>
+            <span>State / Province</span>
+            <input type="text" name="state" required />
+          </label>
+        </div>
+
+        <div class="row-zip-country">
+          <label>
+            <span>ZIP / Postal code</span>
+            <input type="text" name="zip" required />
+          </label>
+          <label>
+            <span>Country</span>
+            <input type="text" name="country" required />
+          </label>
+        </div>
+
+        <button type="submit" id="submit-btn">Send My Address</button>
+        <p class="message" id="form-message"></p>
+      </form>
+    </div>
+
+    <div id="thank-you-section" style="display:none;">
+      <p class="thank-you">Thank you — your invitation will be on its way soon.</p>
+    </div>
   </div>
+
+  <script>
+    document.getElementById('address-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const msg = document.getElementById('form-message');
+      const data = Object.fromEntries(new FormData(this).entries());
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      msg.textContent = '';
+      msg.className = 'message';
+
+      try {
+        const res = await fetch('/api/address', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error();
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('thank-you-section').style.display = 'block';
+      } catch {
+        msg.textContent = 'Something went wrong — please try again.';
+        msg.className = 'message error';
+        btn.disabled = false;
+        btn.textContent = 'Send My Address';
+      }
+    });
+  </script>
 </body>
 </html>
