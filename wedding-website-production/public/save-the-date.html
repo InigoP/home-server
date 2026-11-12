@@ -4,101 +4,329 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sonia & Inigo — Save the Date</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Special+Elite&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg:     #EDE8D7;
+      --black:  #1A1510;
+      --pink:   #C85A70;
+      --yellow: #D6A82E;
+      --orange: #C46232;
+      --cream:  #F5F1E6;
+}
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: Georgia, serif;
-      background: #f5f0eb;
-      color: #3b3b3b;
+      font-family: 'Special Elite', serif;
+      background: var(--bg);
+      color: var(--black);
       min-height: 100vh;
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding: 3rem 1.5rem;
+      padding: 3rem 1.5rem 4rem;
     }
 
-    .card {
-      max-width: 540px;
+    /* Halftone — denser for photocopy feel */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--black) 1px, transparent 1px);
+      background-size: 10px 10px;
+      opacity: 0.055;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .page {
+      max-width: 660px;
       width: 100%;
+      animation: pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    @keyframes pop-in {
+      from { opacity: 0; transform: scale(0.97) translateY(16px); }
+      to   { opacity: 1; transform: scale(1)    translateY(0); }
+    }
+
+    /* ═══════════════════════════════════════════════
+       FILM SECTION
+    ═══════════════════════════════════════════════ */
+
+    .film-section {
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    /* Sprocket strips */
+    .sprocket-strip {
+      height: 0.85rem;
+      background-color: var(--black);
+      background-image: radial-gradient(ellipse 3px 4px at center, var(--bg) 99%, transparent 100%);
+      background-size: 22px 100%;
+      background-repeat: repeat-x;
+      background-position: 11px center;
+    }
+
+    /* Static scene data line — replaces the scrolling ticker */
+    .scene-data {
+      background: var(--black);
+      padding: 0.3rem 1.5rem;
+      font-family: 'Special Elite', serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      color: rgba(245, 242, 232, 0.5);
+      text-transform: uppercase;
+      text-align: center;
+      border-top: 1px solid #2a2a2a;
+    }
+
+    /* ── Top zone ──────────────────────────────────── */
+
+    .top-zone {
+      padding: 2rem 2.75rem 2rem;
+      position: relative;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
     }
 
-    .eyebrow {
-      font-size: 0.75rem;
-      letter-spacing: 0.4em;
+    /* ── Names ─────────────────────────────────────── */
+
+    .now-showing {
+      font-family: 'Special Elite', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: #888;
-      margin-bottom: 1.25rem;
+      color: var(--black);
+      opacity: 0.5;
+      margin-bottom: 0.65rem;
     }
 
-    h1 {
-      font-size: 3rem;
-      font-weight: normal;
-      line-height: 1.1;
-      margin-bottom: 1rem;
+    .names-zone {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
     }
 
-    .details {
+    .name-slab {
+      display: inline-block;
+      padding: 0.05rem 0.6rem 0.05rem 0;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .name-slab.pink   { background: var(--pink); }
+    .name-slab.yellow { background: var(--yellow); }
+
+    .name {
+      font-family: 'Permanent Marker', cursive;
+      font-size: clamp(2rem, 7vw, 3.25rem);
+      line-height: 1;
+      display: block;
+    }
+    .name-slab.pink   .name { color: var(--cream); }
+    .name-slab.yellow .name { color: var(--black); }
+
+    .amp-line {
+      font-family: 'Permanent Marker', cursive;
+      font-size: 1.5rem;
+      color: var(--orange);
+      flex-shrink: 0;
+    }
+
+    /* ── Event callout ─────────────────────────────── */
+
+    .event-callout {
+      display: inline-block;
+      border: 2.5px solid var(--black);
+      padding: 0.9rem 1.1rem;
+      position: relative;
+    }
+
+    .event-callout::before {
+      content: '★  WEDDING  ★';
+      position: absolute;
+      top: -0.6rem;
+      left: 0.65rem;
+      background: var(--bg);
+      padding: 0 0.35rem;
+      font-family: 'Special Elite', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: var(--pink);
+    }
+
+    .event-date {
+      font-family: 'Permanent Marker', cursive;
+      font-size: 1.25rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .event-venue {
+      font-family: 'Special Elite', serif;
+      font-size: 0.85rem;
+      line-height: 1.55;
+    }
+
+    .event-city {
+      font-family: 'Special Elite', serif;
+      font-size: 0.75rem;
+      color: #777;
+      margin-top: 0.2rem;
+    }
+
+    /* ═══════════════════════════════════════════════
+       CUT-HERE SEPARATOR
+    ═══════════════════════════════════════════════ */
+
+    .cut-here {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 2rem 0 2.5rem;
+      opacity: 0.45;
+    }
+
+    .cut-scissors {
       font-size: 1.1rem;
-      line-height: 1.8;
-      color: #555;
-      margin-bottom: 2.5rem;
+      /* Rotate so scissors point along the dashes */
+      display: inline-block;
+      transform: rotate(90deg) scaleX(-1);
+      line-height: 1;
     }
 
-    .divider {
-      border: none;
-      border-top: 1px solid #c9bfb5;
-      margin: 2.5rem 0;
+    .cut-dashes {
+      flex: 1;
+      border-top: 1.5px dashed var(--black);
     }
 
-    .form-heading {
-      font-size: 0.75rem;
-      letter-spacing: 0.4em;
+    .cut-label {
+      font-family: 'Special Elite', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: #888;
-      margin-bottom: 0.5rem;
+      white-space: nowrap;
+    }
+
+    /* ═══════════════════════════════════════════════
+       ADDRESS PLACARD — the reply card
+    ═══════════════════════════════════════════════ */
+
+    .placard {
+      position: relative;
+      margin: 0 1rem; /* slight indent so rotated corners don't clip */
+      transform: rotate(-1deg);
+      background: var(--cream);
+      border: 2.5px solid var(--black);
+      box-shadow: 5px 5px 0 var(--black);
+    }
+
+    /* Yellow tape — left corner */
+    .placard::before {
+      content: '';
+      position: absolute;
+      top: -11px;
+      left: 14%;
+      width: 52px;
+      height: 17px;
+      background: rgba(255, 228, 40, 0.70);
+      border: 1px solid rgba(0,0,0,0.1);
+      transform: rotate(-2.5deg);
+      z-index: 1;
+    }
+
+    /* Yellow tape — right corner */
+    .placard::after {
+      content: '';
+      position: absolute;
+      top: -11px;
+      right: 14%;
+      width: 52px;
+      height: 17px;
+      background: rgba(255, 228, 40, 0.70);
+      border: 1px solid rgba(0,0,0,0.1);
+      transform: rotate(2.5deg);
+      z-index: 1;
+    }
+
+    .placard-header {
+      background: var(--yellow);
+      border-bottom: 2.5px solid var(--black);
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+
+    .placard-header h2 {
+      font-family: 'Permanent Marker', cursive;
+      font-size: 1.15rem;
+      color: var(--black);
+    }
+
+    .placard-header .reply-label {
+      font-family: 'Special Elite', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(15, 15, 15, 0.45);
+    }
+
+    .placard-form {
+      padding: 1.75rem 2rem 2.25rem;
     }
 
     .form-subheading {
-      font-size: 0.95rem;
-      color: #666;
-      margin-bottom: 1.75rem;
+      font-family: 'Special Elite', serif;
+      font-size: 0.82rem;
+      color: #777;
+      margin-bottom: 1.5rem;
     }
 
     form {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      text-align: left;
+      gap: 0.85rem;
     }
 
     label {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
+      gap: 0.3rem;
     }
 
     label span {
-      font-size: 0.78rem;
+      font-family: 'Special Elite', serif;
+      font-size: 0.72rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #888;
+      color: #666;
     }
 
     input {
-      border: 1px solid #c9bfb5;
       background: #fff;
+      border: 2px solid var(--black);
       padding: 0.6rem 0.75rem;
-      font-family: Georgia, serif;
-      font-size: 1rem;
-      color: #3b3b3b;
+      font-family: 'Special Elite', serif;
+      font-size: 0.9rem;
+      color: var(--black);
       width: 100%;
       outline: none;
-      transition: border-color 0.15s;
+      transition: box-shadow 0.1s, border-color 0.1s;
     }
 
-    input:focus { border-color: #3b3b3b; }
+    input:focus {
+      border-color: var(--pink);
+      box-shadow: 3px 3px 0 var(--pink);
+    }
 
     .row {
       display: flex;
@@ -106,114 +334,207 @@
       align-items: flex-end;
     }
 
-    .row label:first-child { flex: 1; }
-    .row label:last-child { width: 7rem; }
-
-    .row-zip-country { display: flex; gap: 0.75rem; }
-    .row-zip-country label:first-child { width: 8rem; }
-    .row-zip-country label:last-child { flex: 1; }
+    .row-names label            { flex: 1; }
+    .row-city label:first-child { flex: 2; }
+    .row-city label:last-child  { flex: 1; }
+    .row-zip  label:first-child { flex: 1; }
+    .row-zip  label:last-child  { flex: 2; }
 
     button {
-      margin-top: 0.5rem;
-      padding: 0.85rem;
-      background: #3b3b3b;
-      color: #f5f0eb;
-      border: none;
-      font-family: Georgia, serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
+      margin-top: 0.75rem;
+      padding: 0.9rem 1.5rem;
+      background: var(--pink);
+      color: #fff;
+      border: 2.5px solid var(--black);
+      box-shadow: 4px 4px 0 var(--black);
+      font-family: 'Permanent Marker', cursive;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
       cursor: pointer;
-      transition: background 0.15s;
+      transition: transform 0.08s, box-shadow 0.08s;
+      width: 100%;
     }
 
-    button:hover { background: #1a1a1a; }
-    button:disabled { background: #aaa; cursor: default; }
+    button:hover  { transform: translate(2px, 2px);  box-shadow: 2px 2px 0 var(--black); }
+    button:active { transform: translate(4px, 4px);  box-shadow: 0   0   0 var(--black); }
+    button:disabled {
+      background: #ccc; color: #999;
+      border-color: #ccc; box-shadow: none;
+      cursor: default; transform: none;
+    }
 
     .message {
-      margin-top: 1rem;
-      font-size: 0.95rem;
+      margin-top: 0.75rem;
+      font-size: 0.75rem;
       text-align: center;
     }
+    .message.error { color: var(--pink); }
 
-    .message.success { color: #4a7c59; }
-    .message.error { color: #c0392b; }
+    /* ── Thank-you state ───────────────────────────── */
 
     .thank-you {
-      margin-top: 1.5rem;
-      font-size: 1rem;
-      color: #555;
-      line-height: 1.7;
+      text-align: center;
+      padding: 1.5rem 0;
+    }
+
+    .thank-you strong {
+      display: block;
+      font-family: 'Permanent Marker', cursive;
+      font-size: clamp(1.75rem, 6vw, 2.5rem);
+      line-height: 1;
+      margin-bottom: 0.85rem;
+    }
+
+    .thank-you .chip {
+      display: inline-block;
+      background: var(--yellow);
+      padding: 0.3rem 0.8rem;
+      font-family: 'Special Elite', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 2px solid var(--black);
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    /* ── Page footnote ─────────────────────────────── */
+
+    .page-note {
+      font-family: 'Special Elite', serif;
+      font-size: 0.62rem;
+      color: #aaa;
+      text-align: center;
+      margin-top: 2rem;
+      letter-spacing: 0.08em;
+    }
+
+@media (max-width: 540px) {
+      .top-zone { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .placard-form { padding: 1.25rem 1.25rem 1.75rem; }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <p class="eyebrow">Save the Date</p>
-    <h1>Sonia &amp; Inigo</h1>
-    <div class="details">
-      <p>June 7, 2026</p>
-      <p>Pavillon de la Jamaïque, Montréal</p>
-    </div>
+  <div class="page">
 
-    <hr class="divider" />
+    <!-- ── Film section ─────────────────────────────── -->
+    <div class="film-section">
 
-    <div id="form-section">
-      <p class="form-heading">Your Address</p>
-      <p class="form-subheading">Share your mailing address so we can send your invitation.</p>
+      <div class="sprocket-strip"></div>
 
-      <form id="address-form">
-        <div class="row">
-          <label>
-            <span>First name</span>
-            <input type="text" name="first_name" required />
-          </label>
-          <label>
-            <span>Last name</span>
-            <input type="text" name="last_name" required />
-          </label>
+      <div class="scene-data">
+        Scene 1 &nbsp;·&nbsp; Take 1 &nbsp;·&nbsp; Ext. Montréal &nbsp;·&nbsp; June 7, 2026
+      </div>
+
+      <div class="top-zone">
+
+        <p class="now-showing">— now showing —</p>
+
+        <div class="names-zone">
+          <div class="name-slab pink">
+            <span class="name">Sonia</span>
+          </div>
+          <span class="amp-line">&amp;</span>
+          <div class="name-slab yellow">
+            <span class="name">Inigo</span>
+          </div>
         </div>
 
-        <label>
-          <span>Address line 1</span>
-          <input type="text" name="address1" required />
-        </label>
-
-        <label>
-          <span>Address line 2 (optional)</span>
-          <input type="text" name="address2" />
-        </label>
-
-        <div class="row">
-          <label>
-            <span>City</span>
-            <input type="text" name="city" required />
-          </label>
-          <label>
-            <span>State / Province</span>
-            <input type="text" name="state" required />
-          </label>
+        <div class="event-callout">
+          <p class="event-date">June 7, 2026</p>
+          <p class="event-venue">Pavillon de la Jamaïque</p>
+          <p class="event-city">Montréal, Québec</p>
         </div>
 
-        <div class="row-zip-country">
-          <label>
-            <span>ZIP / Postal code</span>
-            <input type="text" name="zip" required />
-          </label>
-          <label>
-            <span>Country</span>
-            <input type="text" name="country" required />
-          </label>
+      </div>
+
+      <div class="sprocket-strip"></div>
+
+    </div>
+
+    <!-- ── Cut-here separator ───────────────────────── -->
+    <div class="cut-here">
+      <span class="cut-scissors">✂</span>
+      <div class="cut-dashes"></div>
+      <span class="cut-label">detach &amp; return</span>
+      <div class="cut-dashes"></div>
+    </div>
+
+    <!-- ── Address placard ──────────────────────────── -->
+    <div class="placard">
+
+      <div class="placard-header">
+        <h2>Your Mailing Address</h2>
+        <span class="reply-label">reply card</span>
+      </div>
+
+      <div class="placard-form">
+
+        <div id="form-section-inner">
+          <p class="form-subheading">We'll send your invitation by post.</p>
+
+          <form id="address-form">
+            <div class="row row-names">
+              <label>
+                <span>First name</span>
+                <input type="text" name="first_name" autocomplete="given-name" required />
+              </label>
+              <label>
+                <span>Last name</span>
+                <input type="text" name="last_name" autocomplete="family-name" required />
+              </label>
+            </div>
+
+            <label>
+              <span>Address line 1</span>
+              <input type="text" name="address1" autocomplete="address-line1" required />
+            </label>
+
+            <label>
+              <span>Address line 2 (optional)</span>
+              <input type="text" name="address2" autocomplete="address-line2" />
+            </label>
+
+            <div class="row row-city">
+              <label>
+                <span>City</span>
+                <input type="text" name="city" autocomplete="address-level2" required />
+              </label>
+              <label>
+                <span>State / Province</span>
+                <input type="text" name="state" autocomplete="address-level1" required />
+              </label>
+            </div>
+
+            <div class="row row-zip">
+              <label>
+                <span>Postal code</span>
+                <input type="text" name="zip" autocomplete="postal-code" required />
+              </label>
+              <label>
+                <span>Country</span>
+                <input type="text" name="country" autocomplete="country-name" required />
+              </label>
+            </div>
+
+            <button type="submit" id="submit-btn">Send My Address →</button>
+            <p class="message" id="form-message"></p>
+          </form>
         </div>
 
-        <button type="submit" id="submit-btn">Send My Address</button>
-        <p class="message" id="form-message"></p>
-      </form>
+        <div id="thank-you-section" style="display:none;">
+          <div class="thank-you">
+            <strong>See You There!</strong>
+            <span class="chip">Invitation incoming ★</span>
+          </div>
+        </div>
+
+      </div>
+
     </div>
 
-    <div id="thank-you-section" style="display:none;">
-      <p class="thank-you">Thank you — your invitation will be on its way soon.</p>
-    </div>
+    <p class="page-note">* formal invitation to follow by post</p>
+
   </div>
 
   <script>
@@ -235,13 +556,13 @@
           body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error();
-        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('form-section-inner').style.display = 'none';
         document.getElementById('thank-you-section').style.display = 'block';
       } catch {
         msg.textContent = 'Something went wrong — please try again.';
         msg.className = 'message error';
         btn.disabled = false;
-        btn.textContent = 'Send My Address';
+        btn.textContent = 'Send My Address →';
       }
     });
   </script>
