@@ -2,24 +2,92 @@ import FlipLink from "@/components/FlipLink";
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-[85vh] items-center justify-center bg-[#FAD200] px-6 text-center overflow-hidden">
-      <div className="absolute -top-10 -left-10 h-40 w-40 rounded-full bg-[#ED2232] border-2 border-[#020202]" aria-hidden />
-      <div className="absolute bottom-6 right-6 rotate-6 border-2 border-[#020202] bg-[#020202] px-4 py-2 text-sm font-bold uppercase tracking-widest text-white" aria-hidden>
-        Montréal · 2026
-      </div>
+    <section
+      className="relative flex min-h-[85vh] flex-col items-center justify-center px-6 text-center overflow-hidden"
+      style={{ background: "var(--bg)" }}
+    >
+      <div className="sprocket-strip absolute top-0 left-0 right-0" />
+
       <div>
-        <p className="inline-block rotate-[-2deg] border-2 border-[#020202] bg-white px-4 py-1 text-xs font-bold uppercase tracking-[0.5em]">Save the date</p>
-        <h1 className="mt-8 font-display text-6xl md:text-8xl uppercase leading-[1.1] tracking-tight text-[#020202]">
-          Sonia<br />&amp; Inigo
-        </h1>
-        <p className="mt-6 text-sm font-bold uppercase tracking-[0.3em] text-[#020202]">Sunday, June 7, 2026 · La Toundra, Montréal</p>
-        <FlipLink
-          href="/rsvp"
-          className="mt-10 inline-block rounded-none border-2 border-[#020202] bg-[#ED2232] px-10 py-3 text-sm font-bold uppercase tracking-[0.3em] text-white transition-transform hover:-translate-y-1"
+        <p
+          className="mb-6 text-[0.65rem] uppercase tracking-[0.4em] opacity-50"
+          style={{ fontFamily: "var(--font-se)" }}
         >
-          RSVP
-        </FlipLink>
+          — now showing —
+        </p>
+
+        <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+          <div
+            className="inline-block"
+            style={{ background: "var(--pink)", padding: "0.05rem 0.75rem 0.05rem 0" }}
+          >
+            <span
+              className="block font-display leading-none"
+              style={{ fontSize: "clamp(2.5rem, 8vw, 4.5rem)", color: "var(--cream)" }}
+            >
+              Sonia
+            </span>
+          </div>
+          <span
+            className="font-display"
+            style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)", color: "var(--orange)" }}
+          >
+            &amp;
+          </span>
+          <div
+            className="inline-block"
+            style={{ background: "var(--yellow)", padding: "0.05rem 0.75rem 0.05rem 0" }}
+          >
+            <span
+              className="block font-display leading-none"
+              style={{ fontSize: "clamp(2.5rem, 8vw, 4.5rem)", color: "var(--black)" }}
+            >
+              Inigo
+            </span>
+          </div>
+        </div>
+
+        <div
+          className="relative inline-block px-6 py-4"
+          style={{ border: "2.5px solid var(--black)" }}
+        >
+          <span
+            className="absolute text-[0.6rem] uppercase tracking-[0.12em] px-2"
+            style={{
+              top: "-0.6rem",
+              left: "0.75rem",
+              background: "var(--bg)",
+              fontFamily: "var(--font-se)",
+              color: "var(--pink)",
+            }}
+          >
+            ★ Wedding ★
+          </span>
+          <p className="font-display text-xl mb-1">June 7, 2026</p>
+          <p style={{ fontFamily: "var(--font-se)", fontSize: "0.85rem", lineHeight: 1.55 }}>
+            Pavillon de la Jamaïque
+          </p>
+          <p style={{ fontFamily: "var(--font-se)", fontSize: "0.75rem", color: "#777", marginTop: "0.2rem" }}>
+            Montréal, Québec
+          </p>
+        </div>
+
+        <div className="mt-8">
+          <FlipLink
+            href="/rsvp"
+            className="inline-block font-display text-sm uppercase tracking-[0.08em] px-10 py-3 text-white transition-transform hover:-translate-y-0.5"
+            style={{
+              background: "var(--pink)",
+              border: "2.5px solid var(--black)",
+              boxShadow: "4px 4px 0 var(--black)",
+            }}
+          >
+            RSVP
+          </FlipLink>
+        </div>
       </div>
+
+      <div className="sprocket-strip absolute bottom-0 left-0 right-0" />
     </section>
   );
 }

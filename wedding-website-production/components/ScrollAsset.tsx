@@ -21,7 +21,12 @@ export default function ScrollAsset() {
         src="/photostrip.jpg"
         alt=""
         draggable={false}
-        className="h-auto max-h-[55vh] w-auto -rotate-3 select-none border-4 border-[#020202] bg-white p-2 shadow-[8px_8px_0_0_#020202]"
+        className="h-auto max-h-[55vh] w-auto -rotate-3 select-none border-4 p-2"
+        style={{
+          borderColor: "var(--black)",
+          background: "var(--cream)",
+          boxShadow: "8px 8px 0 0 var(--black)",
+        }}
       />
     </div>
   );

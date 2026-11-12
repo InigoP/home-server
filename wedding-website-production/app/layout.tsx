@@ -1,32 +1,32 @@
 import type { Metadata } from "next";
-import { VT323, Anton } from "next/font/google";
+import { Permanent_Marker, Special_Elite } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 
-const vt = VT323({
+const permanentMarker = Permanent_Marker({
   weight: "400",
-  variable: "--font-vt",
+  variable: "--font-pm",
   subsets: ["latin"],
 });
 
-const display = Anton({
-  variable: "--font-anton",
-  subsets: ["latin"],
+const specialElite = Special_Elite({
   weight: "400",
+  variable: "--font-se",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   title: "Sonia & Inigo — June 7, 2026",
-  description: "Wedding website for Sonia & Inigo at La Toundra, Montréal.",
+  description: "Wedding website for Sonia & Inigo at Pavillon de la Jamaïque, Montréal.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${vt.variable} ${display.variable} h-full antialiased`}
+      className={`${permanentMarker.variable} ${specialElite.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col bg-white text-[#020202]">
+      <body className="min-h-full flex flex-col">
         <Nav />
         {children}
       </body>

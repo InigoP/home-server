@@ -28,78 +28,196 @@ export default function RsvpPage() {
     }
   }
 
+  const fieldStyle = {
+    border: "2px solid var(--black)",
+    background: "#fff",
+    fontFamily: "var(--font-se)",
+    fontSize: "0.9rem",
+    color: "var(--black)",
+    padding: "0.6rem 0.75rem",
+    width: "100%",
+  };
+
+  const labelStyle = {
+    fontFamily: "var(--font-se)",
+    fontSize: "0.72rem",
+    letterSpacing: "0.1em",
+    textTransform: "uppercase" as const,
+    opacity: 0.6,
+  };
+
   return (
-    <main className="min-h-screen bg-white flex items-center justify-center p-6">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md border-2 border-[#020202] bg-white p-8 flex flex-col gap-4"
-      >
-        <h1 className="text-xs uppercase tracking-[0.5em] text-[#444]">RSVP</h1>
-
-        <label className="flex flex-col gap-1">
-          <span className="text-sm text-[#444]">Name</span>
-          <input
-            required
-            className="border-2 border-[#020202] bg-white px-3 py-2 text-[#020202]"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
+    <main
+      className="min-h-screen flex items-start justify-center p-8 pt-16"
+      style={{ background: "var(--bg)" }}
+    >
+      <div className="w-full max-w-md">
+        {/* Reply card placard */}
+        <div className="relative mx-2" style={{ transform: "rotate(-0.75deg)" }}>
+          {/* Yellow tape */}
+          <div
+            className="absolute z-10"
+            style={{
+              top: "-11px",
+              left: "14%",
+              width: "52px",
+              height: "17px",
+              background: "rgba(255, 228, 40, 0.75)",
+              border: "1px solid rgba(0,0,0,0.1)",
+              transform: "rotate(-2.5deg)",
+            }}
           />
-        </label>
-
-        <label className="flex flex-col gap-1">
-          <span className="text-sm text-[#444]">Email</span>
-          <input
-            type="email"
-            className="border-2 border-[#020202] bg-white px-3 py-2 text-[#020202]"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
+          <div
+            className="absolute z-10"
+            style={{
+              top: "-11px",
+              right: "14%",
+              width: "52px",
+              height: "17px",
+              background: "rgba(255, 228, 40, 0.75)",
+              border: "1px solid rgba(0,0,0,0.1)",
+              transform: "rotate(2.5deg)",
+            }}
           />
-        </label>
 
-        <label className="flex flex-col gap-1">
-          <span className="text-sm text-[#444]">Attending</span>
-          <select
-            className="border-2 border-[#020202] bg-white px-3 py-2 text-[#020202]"
-            value={form.attending}
-            onChange={(e) => setForm({ ...form, attending: e.target.value })}
+          <div
+            style={{
+              border: "2.5px solid var(--black)",
+              boxShadow: "5px 5px 0 var(--black)",
+              background: "var(--cream)",
+            }}
           >
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        </label>
+            {/* Header */}
+            <div
+              style={{
+                background: "var(--yellow)",
+                borderBottom: "2.5px solid var(--black)",
+                padding: "0.65rem 1.5rem",
+                display: "flex",
+                alignItems: "baseline",
+                gap: "0.75rem",
+              }}
+            >
+              <h1 className="font-display" style={{ fontSize: "1.3rem", color: "var(--black)" }}>
+                RSVP
+              </h1>
+              <span style={{ ...labelStyle, opacity: 0.45 }}>reply card</span>
+            </div>
 
-        <label className="flex flex-col gap-1">
-          <span className="text-sm text-[#444]">Attending welcome party?</span>
-          <select
-            className="border-2 border-[#020202] bg-white px-3 py-2 text-[#020202]"
-            value={form.welcome_party}
-            onChange={(e) => setForm({ ...form, welcome_party: e.target.value })}
-          >
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        </label>
+            <div className="p-8 flex flex-col gap-5">
+              {status !== "done" ? (
+                <>
+                  <p className="text-sm opacity-60" style={{ fontFamily: "var(--font-se)" }}>
+                    Please RSVP by April 1, 2026.
+                  </p>
 
-        <label className="flex flex-col gap-1">
-          <span className="text-sm text-[#444]">Dietary restrictions</span>
-          <input
-            className="border-2 border-[#020202] bg-white px-3 py-2 text-[#020202]"
-            value={form.dietary}
-            onChange={(e) => setForm({ ...form, dietary: e.target.value })}
-          />
-        </label>
+                  <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                    <label className="flex flex-col gap-1">
+                      <span style={labelStyle}>Name</span>
+                      <input
+                        required
+                        style={fieldStyle}
+                        value={form.name}
+                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      />
+                    </label>
 
-        <button
-          type="submit"
-          disabled={status === "saving"}
-          className="border-2 border-[#020202] bg-[#ED2232] text-white py-2.5 font-bold uppercase tracking-[0.2em] hover:bg-[#e01f7c] transition-colors"
-        >
-          {status === "saving" ? "Saving..." : "Submit RSVP"}
-        </button>
+                    <label className="flex flex-col gap-1">
+                      <span style={labelStyle}>Email</span>
+                      <input
+                        type="email"
+                        style={fieldStyle}
+                        value={form.email}
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      />
+                    </label>
 
-        {status === "done" && <p className="text-green-600">Thanks! Your RSVP is saved.</p>}
-        {status === "error" && <p className="text-red-600">Something went wrong. Please try again.</p>}
-      </form>
+                    <label className="flex flex-col gap-1">
+                      <span style={labelStyle}>Attending the wedding?</span>
+                      <select
+                        style={fieldStyle}
+                        value={form.attending}
+                        onChange={(e) => setForm({ ...form, attending: e.target.value })}
+                      >
+                        <option value="yes">Yes, I'll be there</option>
+                        <option value="no">Sorry, can't make it</option>
+                      </select>
+                    </label>
+
+                    <label className="flex flex-col gap-1">
+                      <span style={labelStyle}>Attending welcome party?</span>
+                      <select
+                        style={fieldStyle}
+                        value={form.welcome_party}
+                        onChange={(e) => setForm({ ...form, welcome_party: e.target.value })}
+                      >
+                        <option value="yes">Yes, see you Saturday</option>
+                        <option value="no">Just the main event</option>
+                      </select>
+                    </label>
+
+                    <label className="flex flex-col gap-1">
+                      <span style={labelStyle}>Dietary restrictions</span>
+                      <input
+                        style={fieldStyle}
+                        value={form.dietary}
+                        onChange={(e) => setForm({ ...form, dietary: e.target.value })}
+                      />
+                    </label>
+
+                    <button
+                      type="submit"
+                      disabled={status === "saving"}
+                      className="mt-1 py-3 font-display text-sm uppercase tracking-[0.04em] text-white transition-transform hover:translate-x-[2px] hover:translate-y-[2px]"
+                      style={{
+                        background: status === "saving" ? "#ccc" : "var(--pink)",
+                        border: "2.5px solid var(--black)",
+                        boxShadow: status === "saving" ? "none" : "4px 4px 0 var(--black)",
+                        cursor: status === "saving" ? "default" : "pointer",
+                      }}
+                    >
+                      {status === "saving" ? "Sending..." : "Submit RSVP →"}
+                    </button>
+
+                    {status === "error" && (
+                      <p
+                        className="text-sm text-center"
+                        style={{ fontFamily: "var(--font-se)", color: "var(--pink)" }}
+                      >
+                        Something went wrong — please try again.
+                      </p>
+                    )}
+                  </form>
+                </>
+              ) : (
+                <div className="text-center py-4">
+                  <strong
+                    className="block font-display mb-3"
+                    style={{ fontSize: "clamp(1.75rem, 6vw, 2.5rem)", color: "var(--black)" }}
+                  >
+                    See You There!
+                  </strong>
+                  <span
+                    className="inline-block"
+                    style={{
+                      background: "var(--yellow)",
+                      padding: "0.3rem 0.8rem",
+                      border: "2px solid var(--black)",
+                      boxShadow: "2px 2px 0 var(--black)",
+                      fontFamily: "var(--font-se)",
+                      fontSize: "0.78rem",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    RSVP received ★
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }

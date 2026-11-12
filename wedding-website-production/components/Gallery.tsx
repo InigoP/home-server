@@ -2,23 +2,58 @@ const photos = [1, 2, 3, 4];
 
 export default function Gallery() {
   return (
-    <section className="max-w-5xl mx-auto px-6 py-24">
-      <h2 className="text-center text-xs uppercase tracking-[0.5em] text-[#444]">Our Story</h2>
-      <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {photos.map((n) => (
-          <figure key={n} className="group overflow-hidden">
-            <div className="aspect-square bg-white border-2 border-[#020202]">
-              <img
-                src="/example_pic.jpg"
-                alt={`Photo ${n}`}
-                className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
-              />
-            </div>
-            <figcaption className="mt-3 text-center text-[0.65rem] uppercase tracking-[0.3em] text-[#777]">
-              0{n}
-            </figcaption>
-          </figure>
-        ))}
+    <section className="py-24">
+      <h2
+        className="text-center mb-12 text-[0.65rem] uppercase tracking-[0.4em] opacity-50 px-6"
+        style={{ fontFamily: "var(--font-se)" }}
+      >
+        Our Story
+      </h2>
+
+      {/* Horizontal film strip */}
+      <div className="overflow-x-auto">
+        <div
+          style={{
+            background: "var(--black)",
+            display: "flex",
+            flexDirection: "column",
+            minWidth: "100%",
+          }}
+        >
+          <div className="sprocket-strip" />
+
+          <div style={{ display: "flex", gap: "4px", padding: "8px 4px" }}>
+            {photos.map((n) => (
+              <div
+                key={n}
+                className="group"
+                style={{ flex: 1, minWidth: "160px", position: "relative" }}
+              >
+                <div style={{ aspectRatio: "1", overflow: "hidden" }}>
+                  <img
+                    src="/example_pic.jpg"
+                    alt={`Photo ${n}`}
+                    className="transition duration-700 ease-out group-hover:scale-105"
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                </div>
+                <span
+                  className="font-display text-xs"
+                  style={{
+                    position: "absolute",
+                    bottom: "6px",
+                    right: "8px",
+                    color: "rgba(245, 241, 230, 0.4)",
+                  }}
+                >
+                  0{n}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="sprocket-strip" />
+        </div>
       </div>
     </section>
   );
