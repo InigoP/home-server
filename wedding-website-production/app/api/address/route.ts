@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/db";
+import { sendNotification } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,14 +14,35 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const stmt = db.prepare(`
-      INSERT INTO addresses (first_name, last_name, address1, address2, city, state, zip, country)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+    // Check for an existing record by name so a resubmission updates in place
+    const existing = db.prepare(
+      "SELECT id FROM addresses WHERE first_name = ? AND last_name = ?"
+    ).get(first_name, last_name) as { id: number } | undefined;
 
-    const result = stmt.run(first_name, last_name, address1, address2 || null, city, state, zip, country);
+    let id: number;
+    if (existing) {
+      db.prepare(`
+        UPDATE addresses
+        SET address1 = ?, address2 = ?, city = ?, state = ?, zip = ?, country = ?,
+            created_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `).run(address1, address2 || null, city, state, zip, country, existing.id);
+      id = existing.id;
+    } else {
+      const result = db.prepare(`
+        INSERT INTO addresses (first_name, last_name, address1, address2, city, state, zip, country)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(first_name, last_name, address1, address2 || null, city, state, zip, country);
+      id = Number(result.lastInsertRowid);
+    }
 
+    // Fire webhook + email after the DB write; never blocks the guest's response
     const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
+    const displayName = `${first_name} ${last_name}`;
+    const addressSummary = [address1, address2, city, state, zip, country]
+      .filter(Boolean)
+      .join(", ");
+
     if (webhookUrl) {
       fetch(webhookUrl, {
         method: "POST",
@@ -37,10 +59,23 @@ export async function POST(req: NextRequest) {
           country,
           submitted_at: new Date().toISOString(),
         }),
-      }).catch((e) => console.error("Sheet sync failed:", e));
+      })
+        .then(() =>
+          sendNotification(
+            `Address synced — ${displayName}`,
+            `${displayName}'s address was added to Google Sheets.\n\n${addressSummary}`
+          ).catch((e) => console.error("Email notification failed:", e))
+        )
+        .catch((e) => {
+          console.error("Sheet sync failed:", e);
+          sendNotification(
+            `FAILED: Sheet sync for ${displayName}`,
+            `Failed to sync ${displayName}'s address to Google Sheets.\n\nError: ${e}\n\nAddress (add manually):\n${addressSummary}`
+          ).catch((emailErr) => console.error("Email notification failed:", emailErr));
+        });
     }
 
-    return NextResponse.json({ success: true, id: result.lastInsertRowid });
+    return NextResponse.json({ success: true, id });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "failed to save address" }, { status: 500 });
