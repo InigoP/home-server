@@ -15,6 +15,20 @@
 #   scripts/sync-new-subtitles.sh --all            # re-check everything
 #   scripts/sync-new-subtitles.sh --dry-run        # report only, change nothing
 #   scripts/sync-new-subtitles.sh path/to/file.srt # just these files
+#
+# Dependencies:
+#   docker   — used to run ffsubsync without a local install; the image is
+#              pulled automatically on first run if not already present
+#   flock    — for the per-run lock (util-linux, standard on Linux)
+#   stat     — GNU coreutils version (uses -c format)
+#
+# Configuration (env vars, all optional):
+#   MEDIA_ROOT      Root of the media library to scan (default: /mnt/mypassport/Media_Server/media)
+#   XDG_STATE_HOME  Where to store the processed-files state (default: ~/.local/state)
+#
+# State is kept in $XDG_STATE_HOME/subtitle-sync/processed.tsv — one line per
+# processed file, keyed on path + size + mtime. Delete this file (or run --all)
+# to force a full re-check of the library.
 set -euo pipefail
 
 MEDIA_ROOT="${MEDIA_ROOT:-/mnt/mypassport/Media_Server/media}"
@@ -72,7 +86,9 @@ video_for() {
   local s="$1" base
   base="$(basename "$s")"
   base="${base%.*}"            # .srt
-  base="${base%.*}"            # .en / .hi
+  case "$base" in
+    *.en|*.hi|*.eng|*.forced) base="${base%.*}" ;;
+  esac
   case "$base" in
     *.en|*.hi|*.eng|*.forced) base="${base%.*}" ;;
   esac
@@ -135,8 +151,8 @@ for srt in "${SUBS[@]}"; do
       --entrypoint ffs "$FFSUBSYNC_IMAGE" \
       "$video" -i "$srt" -o /out/synced.srt 2>&1 || true)"
 
-  offset="$(grep -oE 'offset seconds: -?[0-9.]+' <<<"$sync_log" | grep -oE -- '-?[0-9.]+$' || echo 0)"
-  scale="$(grep -oE 'framerate scale factor: [0-9.]+' <<<"$sync_log" | awk '{print $NF}' || echo 1)"
+  offset="$(grep -oE 'offset seconds: -?[0-9.]+' <<<"$sync_log" | grep -oE -- '-?[0-9.]+$')"
+  scale="$(grep -oE 'framerate scale factor: [0-9.]+' <<<"$sync_log" | awk '{print $NF}')"
   score="$(grep -oE 'score: [0-9.]+' <<<"$sync_log" | awk '{print $NF}' || echo 0)"
 
   if [[ ! -s "$tmp_out/synced.srt" ]]; then
@@ -144,9 +160,14 @@ for srt in "${SUBS[@]}"; do
     rm -rf "$tmp_out"; continue
   fi
 
+  if [[ -z "$offset" || -z "$scale" ]]; then
+    log "  WARN: could not parse ffsubsync output, leaving file alone"
+    rm -rf "$tmp_out"; continue
+  fi
+
   need_change=0
   awk -v o="$offset" -v s="$scale" -v m="$MIN_OFFSET" \
-      'BEGIN { exit !((o<0?-o:o) >= m || (s<1?-s:s) > 1.001) }' && need_change=1
+      'BEGIN { exit !((o<0?-o:o) >= m || (s>1?s:1/s) > 1.001) }' && need_change=1
 
   if [[ $need_change -eq 0 ]]; then
     log "  in sync (offset ${offset}s, scale ${scale}), nothing to do"

@@ -1,6 +1,24 @@
 #!/usr/bin/env bash
 # weekly-health-report.sh — gather host + Docker stack health and post to Discord.
-# Runs via cron: Fridays 09:00. Webhook URL comes from the gitignored .env.
+#
+# Collects a snapshot of system metrics (uptime, load, memory, disk, swap) and
+# the state of every Docker container, then POSTs a colour-coded embed to a
+# Discord webhook.
+#
+#   Green embed — everything looks healthy
+#   Red embed   — a container is unhealthy/restarting, or the host needs a reboot
+#
+# Runs via cron: Fridays 09:00.
+#
+# Dependencies:
+#   docker     — CLI with access to the Docker socket
+#   python3    — stdlib only (json, urllib); used for safe JSON escaping
+#   coreutils  — free, df, uptime, cut, paste
+#
+# Configuration:
+#   HEALTH_WEBHOOK_URL  Discord incoming-webhook URL. Loaded from
+#                       /home/inigo/home-server/.env if the env var is not
+#                       already set. The script exits immediately if missing.
 set -euo pipefail
 
 ENV_FILE="/home/inigo/home-server/.env"

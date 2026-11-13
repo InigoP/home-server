@@ -1,10 +1,32 @@
 #!/usr/bin/env bash
-# Deploy the `develop` branch of the wedding website to the staging container.
+# deploy-staging.sh — sync the develop branch to staging and restart the staging container.
 #
-# This script lives in scripts/ rather than inside wedding-website-production/
-# on purpose: wedding-website-staging/ is regenerated from the production
-# folder by this script, so any deploy script kept there gets copied along
-# with it and shows up twice.
+# Steps (in order):
+#   1. Fetch origin/develop without merging, so the current branch is never
+#      touched (safe to run straight after deploy-prod.sh leaves master checked out).
+#   2. Use `git archive` to extract wedding-website-production/ from origin/develop
+#      into a temp dir, then rsync it into wedding-website-staging/, deleting any
+#      files that no longer exist on develop.
+#   3. Preserve data-staging/ — the bind-mounted SQLite database that holds RSVP
+#      submissions. This directory is excluded from the rsync wipe so RSVP data
+#      survives every redeploy.
+#   4. Remove any stale staging-website container left over from a previous
+#      compose project, then start the staging-website service from this project's
+#      compose file.
+#
+# Can be run from any directory — the script locates the repo root automatically.
+#
+# Dependencies:
+#   git             — network access to fetch origin/develop
+#   rsync           — for the atomic wipe-and-sync of the staging directory
+#   docker compose  — v2
+#
+# After a successful run the staging site is live at
+# https://staging.soniainigo.pingu93.com.
+#
+# Note: this script lives in scripts/ rather than inside wedding-website-production/
+# because that folder is what gets archived into staging — a script kept there
+# would be copied into the staging site files and appear twice.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

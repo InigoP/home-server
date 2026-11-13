@@ -1,6 +1,29 @@
 #!/usr/bin/env bash
 # daily-website-health.sh — check wedding website container + public URL and post to Discord.
+#
+# Two checks run every day:
+#   1. HTTP check    — curl the public URL; expects a 200 or 304 response.
+#   2. Docker check  — verify the wedding-website container is not unhealthy.
+#
+# Results are posted as a Discord embed:
+#   Green  — HTTP 200/304 and container healthy
+#   Red    — any other HTTP code, or container flagged unhealthy
+#
 # Runs via cron: daily 09:00.
+#
+# Dependencies:
+#   curl     — for the HTTP check
+#   docker   — CLI with access to the Docker socket
+#   python3  — stdlib only (json, sys, urllib)
+#
+# Configuration:
+#   HEALTH_WEBHOOK_URL  Discord incoming-webhook URL. Loaded from
+#                       /home/inigo/home-server/.env if not already set.
+#                       The script exits immediately if missing.
+#
+#   URL / CONTAINER     Hardcoded to https://soniainigo.pingu93.com and the
+#                       wedding-website container. Edit those two variables at
+#                       the top of the script to monitor a different site.
 set -euo pipefail
 
 ENV_FILE="/home/inigo/home-server/.env"
