@@ -7,10 +7,12 @@ export default function FlipLink({
   href,
   children,
   className = "",
+  style,
 }: {
   href: string;
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   const router = useRouter();
   const [flipped, setFlipped] = useState(false);
@@ -27,6 +29,7 @@ export default function FlipLink({
       onClick={handleClick}
       className={className}
       style={{
+        ...style,
         display: "inline-block",
         transition: "transform 0.5s ease-in-out",
         transform: flipped
