@@ -4,9 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sonia & Inigo — Save the Date</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23C85A70'>★</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Special+Elite&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@600;700&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Bebas+Neue&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <style>
     /* ══════════════════════════════════════════════
        DESIGN TOKENS
@@ -15,26 +16,11 @@
       --bg:     #EDE8D7;
       --black:  #1A1510;
       --pink:   #C85A70;
-      --yellow: #D6A82E;
-      --orange: #C46232;
+      --yellow: #5a6ec8;
+      --orange: #1A1510;
       --cream:  #F5F1E6;
       --film:   var(--black);
 
-      --font-display: 'Permanent Marker', cursive;
-      --font-body:    'Special Elite', serif;
-    }
-
-    body[data-theme="parisian"] {
-      --font-display: 'Cinzel Decorative', serif;
-      --font-body:    'Cormorant Garamond', serif;
-    }
-
-    body[data-theme="script"] {
-      --font-display: 'Dancing Script', cursive;
-      --font-body:    'Libre Baskerville', serif;
-    }
-
-    body[data-theme="editorial"] {
       --font-display: 'Bebas Neue', sans-serif;
       --font-body:    'Courier Prime', monospace;
     }
@@ -66,54 +52,6 @@
       pointer-events: none;
       z-index: 999;
     }
-
-    /* ══════════════════════════════════════════════
-       FONT SWITCHER
-    ══════════════════════════════════════════════ */
-    .font-switcher {
-      display: flex;
-      align-items: stretch;
-      max-width: 660px;
-      width: 100%;
-      background: var(--film);
-      border: 2px solid var(--film);
-      overflow: hidden;
-    }
-
-    .font-label {
-      padding: 0.5rem 0.9rem;
-      font-family: 'Special Elite', serif;
-      font-size: 0.55rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: rgba(245, 242, 232, 0.4);
-      border-right: 1px solid rgba(255,255,255,0.12);
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-    }
-
-    .font-btn {
-      flex: 1;
-      padding: 0.5rem 0.6rem;
-      font-family: 'Special Elite', serif;
-      font-size: 0.58rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(245, 242, 232, 0.5);
-      background: transparent;
-      border: none;
-      border-right: 1px solid rgba(255,255,255,0.12);
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-      box-shadow: none;
-      width: auto;
-      margin: 0;
-    }
-
-    .font-btn:last-child { border-right: none; }
-    .font-btn:hover { background: rgba(255,255,255,0.1); color: rgba(245, 242, 232, 0.9); }
-    .font-btn.active { background: var(--yellow); color: var(--black); }
 
     /* ══════════════════════════════════════════════
        PAGE CARD
@@ -189,20 +127,20 @@
 
     .name {
       font-family: var(--font-display);
-      font-size: clamp(2rem, 7vw, 3.25rem);
-      line-height: 1;
+      font-size: clamp(2.75rem, 9vw, 4.25rem);
+      letter-spacing: 0.1em;
+      line-height: 0.9;
       display: block;
-      transition: font-size 0.2s;
     }
     .name-slab.pink   .name { color: var(--cream); }
-    .name-slab.yellow .name { color: var(--black); }
+    .name-slab.yellow .name { color: var(--cream); }
 
     .amp-line {
       font-family: var(--font-display);
-      font-size: 1.5rem;
+      font-size: 2.25rem;
+      letter-spacing: 0.1em;
       color: var(--orange);
       flex-shrink: 0;
-      transition: font-size 0.2s;
     }
 
     /* ── Event callout ─────────────────────────────── */
@@ -217,65 +155,37 @@
       content: '★  WEDDING  ★';
       position: absolute;
       top: -0.6rem;
-      left: 0.65rem;
+      right: -0.5rem;
       background: var(--bg);
       padding: 0 0.35rem;
       font-family: var(--font-body);
       font-size: 0.65rem;
       letter-spacing: 0.12em;
       color: var(--pink);
+      transform: rotate(4deg);
     }
 
     .event-date {
       font-family: var(--font-display);
-      font-size: 1.25rem;
+      font-size: 1.5rem;
+      letter-spacing: 0.1em;
       margin-bottom: 0.45rem;
     }
 
     .event-venue {
       font-family: var(--font-body);
-      font-size: 0.85rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
       line-height: 1.55;
     }
 
     .event-city {
       font-family: var(--font-body);
-      font-size: 0.75rem;
-      color: #777;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: #000000;
       margin-top: 0.2rem;
     }
-
-    /* ══════════════════════════════════════════════
-       PER-THEME OVERRIDES
-    ══════════════════════════════════════════════ */
-
-    body[data-theme="parisian"] .name {
-      font-size: clamp(1.5rem, 5.5vw, 2.6rem);
-      letter-spacing: 0.04em;
-      font-weight: 700;
-    }
-    body[data-theme="parisian"] .amp-line { font-size: 1.2rem; letter-spacing: 0.06em; }
-    body[data-theme="parisian"] .event-date { font-size: 1.05rem; letter-spacing: 0.06em; }
-    body[data-theme="parisian"] .event-venue,
-    body[data-theme="parisian"] .event-city { font-style: italic; }
-
-    body[data-theme="script"] .name {
-      font-size: clamp(2.4rem, 8.5vw, 4rem);
-      font-weight: 700;
-      line-height: 1.1;
-    }
-    body[data-theme="script"] .amp-line  { font-size: 2rem; }
-    body[data-theme="script"] .event-date { font-size: 1.5rem; font-weight: 700; }
-
-    body[data-theme="editorial"] .name {
-      font-size: clamp(2.75rem, 9vw, 4.25rem);
-      letter-spacing: 0.1em;
-      line-height: 0.9;
-    }
-    body[data-theme="editorial"] .amp-line   { font-size: 2.25rem; letter-spacing: 0.1em; }
-    body[data-theme="editorial"] .event-date { font-size: 1.5rem; letter-spacing: 0.1em; }
-    body[data-theme="editorial"] .event-venue { font-size: 0.75rem; letter-spacing: 0.15em; }
-    body[data-theme="editorial"] .event-city  { font-size: 0.65rem; letter-spacing: 0.15em; }
 
     /* ══════════════════════════════════════════════
        CUT-HERE SEPARATOR
@@ -407,7 +317,7 @@
     button[type="submit"] {
       margin-top: 0.75rem;
       padding: 0.9rem 1.5rem;
-      background: var(--pink);
+      background: #5a6ec8;
       color: #fff;
       border: 2.5px solid var(--black);
       font-family: var(--font-display);
@@ -471,20 +381,10 @@
     @media (max-width: 540px) {
       .top-zone { padding-left: 1.5rem; padding-right: 1.5rem; }
       .placard-form { padding: 1.25rem 1.25rem 1.75rem; }
-      .font-label { display: none; }
     }
   </style>
 </head>
 <body>
-
-  <!-- ── Font switcher ────────────────────────────── -->
-  <div class="font-switcher">
-    <span class="font-label">Typeface:</span>
-    <button class="font-btn active" data-theme="">Handmade</button>
-    <button class="font-btn" data-theme="parisian">Parisian</button>
-    <button class="font-btn" data-theme="script">Script</button>
-    <button class="font-btn" data-theme="editorial">Editorial</button>
-  </div>
 
   <div class="page">
 
@@ -508,7 +408,7 @@
         </div>
 
         <div class="event-callout">
-          <p class="event-date">June 7, 2026</p>
+          <p class="event-date">June 7, 2027</p>
           <p class="event-venue">Pavillon de la Jamaïque</p>
           <p class="event-city">Montréal, Québec</p>
         </div>
@@ -605,14 +505,6 @@
   </div>
 
   <script>
-    document.querySelectorAll('.font-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.font-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.body.dataset.theme = btn.dataset.theme;
-      });
-    });
-
     document.getElementById('address-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       const btn = document.getElementById('submit-btn');

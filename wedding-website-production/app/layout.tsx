@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Permanent_Marker, Special_Elite } from "next/font/google";
+import { Bebas_Neue, Courier_Prime } from "next/font/google";
 import "./globals.css";
 import ComingSoon from "@/components/ComingSoon";
 import Nav from "@/components/Nav";
 
-const permanentMarker = Permanent_Marker({
+const bebasNeue = Bebas_Neue({
   weight: "400",
   variable: "--font-pm",
   subsets: ["latin"],
 });
 
-const specialElite = Special_Elite({
-  weight: "400",
+const courierPrime = Courier_Prime({
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
   variable: "--font-se",
   subsets: ["latin"],
 });
@@ -32,7 +33,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${permanentMarker.variable} ${specialElite.variable} h-full`}
+      className={`${bebasNeue.variable} ${courierPrime.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
         {comingSoon ? (
