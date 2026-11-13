@@ -283,6 +283,27 @@ What it does, and why:
 Fetches, checks out `master`, merges `origin/develop`, pushes `master`, then
 rebuilds the `wedding-website` container.
 
+### Coming-soon mode
+
+Production shows a placeholder page (`components/ComingSoon.tsx`) while
+`COMING_SOON=true`. Staging is unaffected because its compose file does not set
+the variable.
+
+The production compose file defaults it to `true`. To reveal the full site,
+add this to the root `.env` and recreate the container (no rebuild needed):
+
+```bash
+COMING_SOON=false
+```
+
+```bash
+cd ~/home-server
+docker compose up -d wedding-website
+```
+
+The root layout reads the flag per request, so switching does not require a new
+image. Any host beginning with `staging.` always serves the full site.
+
 ### Why the scripts live in `scripts/`
 
 `wedding-website-staging/` is regenerated from `wedding-website-production/` on

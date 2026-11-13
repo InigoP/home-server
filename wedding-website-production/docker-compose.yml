@@ -12,6 +12,9 @@ services:
       - SMTP_USER=${SMTP_USER:-}
       - SMTP_PASS=${SMTP_PASS:-}
       - NOTIFY_EMAIL=${NOTIFY_EMAIL:-}
+      # Set to false (in the root .env) to reveal the full site. Staging always
+      # shows the full site because its compose file does not set this.
+      - COMING_SOON=${COMING_SOON:-true}
     volumes:
       - ./data:/app/data
     networks:
