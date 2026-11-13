@@ -6,6 +6,12 @@ services:
     environment:
       - RSVP_ADMIN_TOKEN=${RSVP_ADMIN_TOKEN:-changeme}
       - GOOGLE_SHEET_WEBHOOK_URL=${GOOGLE_SHEET_WEBHOOK_URL:-}
+      # Email notifications (set all four to enable; omit to disable silently)
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - NOTIFY_EMAIL=${NOTIFY_EMAIL:-}
     volumes:
       - ./data-staging:/app/data
     networks:
