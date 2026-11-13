@@ -278,7 +278,7 @@ rather than pulled from a registry, so it has its own deploy scripts in
 
 ```bash
 scripts/deploy-staging.sh   # rebuild staging from the develop branch
-scripts/deploy-prod.sh      # merge develop → master, rebuild production
+scripts/deploy-prod.sh      # merge develop → main, rebuild production
 ```
 
 Both run from the repo root and manage the containers through the root

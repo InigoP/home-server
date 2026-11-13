@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# deploy-prod.sh — merge develop into master and redeploy the production container.
+# deploy-prod.sh — merge develop into main and redeploy the production container.
 #
 # Steps (in order):
 #   1. Fetch the latest commits from origin.
-#   2. Check out master and fast-forward merge origin/develop into it.
-#   3. Push master to origin.
+#   2. Check out main and fast-forward merge origin/develop into it.
+#   3. Push main to origin.
 #   4. Rebuild and restart the wedding-website Docker container in place
 #      (docker compose up -d --build).
 #
@@ -27,9 +27,9 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
 git fetch origin
-git checkout master
+git checkout main
 git merge origin/develop --no-edit
-git push origin master
+git push origin main
 
 docker compose up -d --build wedding-website
 echo "Production deployed to https://soniainigo.pingu93.com"

@@ -75,7 +75,7 @@ Deploy the wedding site (never by hand-copying files):
 
 ```bash
 scripts/deploy-staging.sh         # origin/develop -> staging container
-scripts/deploy-prod.sh            # develop -> master -> production container
+scripts/deploy-prod.sh            # develop -> main -> production container
 ```
 
 `deploy-staging.sh` uses `git fetch` + `git archive` + `rsync --delete` and

@@ -112,7 +112,7 @@ every deploy (see §11).
 home-server/
 ├── scripts/
 │   ├── deploy-staging.sh     # develop → wedding-website-staging/ → staging container
-│   └── deploy-prod.sh        # develop → master → production container
+│   └── deploy-prod.sh        # develop → main → production container
 ├── wedding-website-production/            # app source (git-tracked)
 │   ├── app/
 │   │   ├── layout.tsx        # loads Anton + VT323, sets the palette
@@ -210,7 +210,7 @@ Self-hosted approach chosen:
 - [x] Manual deploy scripts (kept in `scripts/` at the repo root so they are not copied into the generated staging folder):
       - `scripts/deploy-staging.sh`
       - `scripts/deploy-prod.sh`
-- [x] Git branch flow: `develop` → staging, `master` → production
+- [x] Git branch flow: `develop` → staging, `main` → production
 - [x] Refactored folder layout:
       - `wedding-website-production/`
       - `wedding-website-staging/` (mirror of develop branch)
@@ -249,7 +249,7 @@ compose files are fragments — never run `docker compose` from inside
 `wedding-website-production/` or `wedding-website-staging/`, or you will get a
 second copy of the same service under a different project name.
 
-Branch flow: `develop` → staging, `master` → production.
+Branch flow: `develop` → staging, `main` → production.
 
 ### Deploying to staging
 
@@ -261,8 +261,8 @@ What it does, and why:
 
 1. **`git fetch origin develop`** — fetch only, never merge. An earlier version
    used `git pull origin develop`, which merges `develop` into whatever branch
-   is checked out; because `deploy-prod.sh` leaves the repo on `master`, that
-   silently merged `develop` into `master`.
+   is checked out; because `deploy-prod.sh` leaves the repo on `main`, that
+   silently merged `develop` into `main`.
 2. **Extracts `origin/develop:wedding-website-production`** into
    `wedding-website-staging/` via `git archive`, then `rsync --delete`s it into
    place. The wipe means files deleted or renamed upstream cannot linger in
@@ -280,7 +280,7 @@ What it does, and why:
 ~/home-server/scripts/deploy-prod.sh
 ```
 
-Fetches, checks out `master`, merges `origin/develop`, pushes `master`, then
+Fetches, checks out `main`, merges `origin/develop`, pushes `main`, then
 rebuilds the `wedding-website` container.
 
 ### Coming-soon mode
@@ -358,7 +358,7 @@ Clean up with `docker rm -f wedding-dev && docker rmi wedding-dev-deps`.
 1. Fill in real content in the existing pages.
 2. Test RSVP submission on staging, verify Google Sheet receives the row.
 3. Update placeholder cards/events with La Toundra details.
-4. Once happy, merge `develop` → `master` and run `scripts/deploy-prod.sh`.
+4. Once happy, merge `develop` → `main` and run `scripts/deploy-prod.sh`.
 5. Decide on long-term domain and any extra features.
 
 ---

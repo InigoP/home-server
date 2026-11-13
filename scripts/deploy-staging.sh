@@ -3,7 +3,7 @@
 #
 # Steps (in order):
 #   1. Fetch origin/develop without merging, so the current branch is never
-#      touched (safe to run straight after deploy-prod.sh leaves master checked out).
+#      touched (safe to run straight after deploy-prod.sh leaves main checked out).
 #   2. Use `git archive` to extract wedding-website-production/ from origin/develop
 #      into a temp dir, then rsync it into wedding-website-staging/, deleting any
 #      files that no longer exist on develop.
@@ -35,7 +35,7 @@ STAGING_DIR="$REPO_ROOT/wedding-website-staging"
 cd "$REPO_ROOT"
 
 # Fetch, never merge. `git pull origin develop` would merge develop into
-# whatever branch is currently checked out (master, after deploy-prod.sh runs),
+# whatever branch is currently checked out (main, after deploy-prod.sh runs),
 # silently polluting it.
 git fetch origin develop
 
