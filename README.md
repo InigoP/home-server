@@ -81,6 +81,12 @@ scripts/deploy-staging.sh   # develop → staging.soniainigo.pingu93.com
 scripts/deploy-prod.sh      # develop → master → soniainigo.pingu93.com
 ```
 
+Subtitles that arrive out of sync (Bazarr often fetches ones timed to a
+different release) are corrected nightly by `scripts/sync-new-subtitles.sh`,
+which measures the offset against the real audio with ffsubsync and keeps the
+original as `<file>.srt.bak`. Run it by hand with `--dry-run` to preview, or
+pass a specific `.srt` to check just that file.
+
 See [wedding-website-production/TECH-SPEC.md](wedding-website-production/TECH-SPEC.md)
 for the full deployment workflow, folder layout, and how to preview locally.
 

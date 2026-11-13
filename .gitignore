@@ -26,3 +26,6 @@ acme.json
 vaultwarden/data/
 uptime-kuma/data/
 pihole/etc-pihole/pihole.toml
+
+# subtitle sync log (runtime)
+scripts/subtitle-sync.log
