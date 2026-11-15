@@ -25,7 +25,7 @@ export default function Nav() {
             <Link
               key={l.href}
               href={l.href}
-              className="text-[0.6rem] uppercase tracking-[0.25em] transition-opacity hover:opacity-100"
+              className="nav-link text-[0.6rem] uppercase tracking-[0.25em]"
               style={{ fontFamily: "var(--font-se)", color: "rgba(245, 241, 230, 0.6)" }}
             >
               {l.label}

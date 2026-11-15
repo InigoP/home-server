@@ -20,7 +20,6 @@ export default function Accommodations() {
               className="relative"
               style={{ transform: i % 2 === 0 ? "rotate(-0.6deg)" : "rotate(0.6deg)" }}
             >
-              {/* Yellow tape — left */}
               <div
                 className="absolute -top-[11px] left-[14%] w-[52px] h-[17px] z-10"
                 style={{
@@ -29,7 +28,6 @@ export default function Accommodations() {
                   transform: "rotate(-2.5deg)",
                 }}
               />
-              {/* Yellow tape — right */}
               <div
                 className="absolute -top-[11px] right-[14%] w-[52px] h-[17px] z-10"
                 style={{
@@ -47,12 +45,12 @@ export default function Accommodations() {
               >
                 <div
                   style={{
-                    background: "var(--yellow)",
+                    background: "var(--blue-purple)",
                     borderBottom: "2.5px solid var(--black)",
                     padding: "0.65rem 1.5rem",
                   }}
                 >
-                  <h3 className="font-display" style={{ fontSize: "1.1rem", color: "var(--black)" }}>
+                  <h3 className="font-display" style={{ fontSize: "1.1rem", color: "var(--cream)" }}>
                     {h.name}
                   </h3>
                 </div>

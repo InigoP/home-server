@@ -7,7 +7,7 @@ import Reveal from "@/components/Reveal";
 
 export default function Home() {
   return (
-    <main className="flex-1 bg-white">
+    <main className="flex-1">
       <Hero />
       <Reveal><Events /></Reveal>
       <Reveal><Accommodations /></Reveal>

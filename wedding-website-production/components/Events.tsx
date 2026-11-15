@@ -35,6 +35,7 @@ export default function Events() {
         {events.map((e) => (
           <div
             key={e.title}
+            className="card-lift"
             style={{
               border: "2.5px solid var(--black)",
               boxShadow: "5px 5px 0 var(--black)",
@@ -43,7 +44,7 @@ export default function Events() {
           >
             <div
               style={{
-                background: "var(--yellow)",
+                background: "var(--blue-purple)",
                 borderBottom: "2.5px solid var(--black)",
                 padding: "0.6rem 1.25rem",
                 display: "flex",
@@ -51,12 +52,12 @@ export default function Events() {
                 gap: "0.5rem",
               }}
             >
-              <span className="font-display" style={{ color: "var(--black)", fontSize: "1rem" }}>
+              <span className="font-display" style={{ color: "var(--cream)", fontSize: "1rem" }}>
                 Scene {e.scene}
               </span>
               <span
-                className="text-[0.5rem] uppercase tracking-[0.15em] opacity-50"
-                style={{ fontFamily: "var(--font-se)" }}
+                className="text-[0.5rem] uppercase tracking-[0.15em] opacity-70"
+                style={{ fontFamily: "var(--font-se)", color: "var(--cream)" }}
               >
                 / {e.title}
               </span>
