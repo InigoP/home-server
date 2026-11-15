@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import db from "@/lib/db";
 import { sendNotification } from "@/lib/email";
 
@@ -44,35 +44,46 @@ export async function POST(req: NextRequest) {
       .join(", ");
 
     if (webhookUrl) {
-      fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "address",
-          first_name,
-          last_name,
-          address1,
-          address2: address2 || "",
-          city,
-          state,
-          zip,
-          country,
-          submitted_at: new Date().toISOString(),
-        }),
-      })
-        .then(() =>
-          sendNotification(
-            `Address synced — ${displayName}`,
-            `${displayName}'s address was added to Google Sheets.\n\n${addressSummary}`
-          ).catch((e) => console.error("Email notification failed:", e))
-        )
-        .catch((e) => {
+      // `after` keeps this work alive once the response has been sent. A bare
+      // fire-and-forget promise is dropped by the Next.js runtime when the
+      // response completes, which silently skipped both the Sheet sync and
+      // the notification email.
+      after(async () => {
+        let synced = false;
+        try {
+          const res = await fetch(webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              type: "address",
+              first_name,
+              last_name,
+              address1,
+              address2: address2 || "",
+              city,
+              state,
+              zip,
+              country,
+              submitted_at: new Date().toISOString(),
+            }),
+          });
+          if (!res.ok) {
+            throw new Error(`webhook responded with ${res.status}`);
+          }
+          synced = true;
+        } catch (e) {
           console.error("Sheet sync failed:", e);
-          sendNotification(
-            `FAILED: Sheet sync for ${displayName}`,
-            `Failed to sync ${displayName}'s address to Google Sheets.\n\nError: ${e}\n\nAddress (add manually):\n${addressSummary}`
-          ).catch((emailErr) => console.error("Email notification failed:", emailErr));
-        });
+        }
+
+        await sendNotification(
+          synced
+            ? `Address synced — ${displayName}`
+            : `FAILED: Sheet sync for ${displayName}`,
+          synced
+            ? `${displayName}'s address was added to Google Sheets.\n\n${addressSummary}`
+            : `Failed to sync ${displayName}'s address to Google Sheets.\n\nAddress (add manually):\n${addressSummary}`
+        ).catch((e) => console.error("Email notification failed:", e));
+      });
     }
 
     return NextResponse.json({ success: true, id });
