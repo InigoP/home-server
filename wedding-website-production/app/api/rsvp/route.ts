@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import db from "@/lib/db";
 
 export async function POST(req: NextRequest) {
@@ -34,21 +34,32 @@ export async function POST(req: NextRequest) {
 
     const result = stmt.run(name, email || null, attending, welcome_party || null, dietary || null);
 
-    // Fire-and-forget sync to Google Sheet
+    // Sync to Google Sheet after the response is sent. `after` keeps the work
+    // alive; a bare fire-and-forget promise is dropped once the response
+    // completes, so RSVPs would never reach the sheet.
     const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
     if (webhookUrl) {
-      fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email: email || "",
-          attending,
-          welcome_party: welcome_party || "",
-          dietary: dietary || "",
-          submitted_at: new Date().toISOString(),
-        }),
-      }).catch((e) => console.error("Sheet sync failed:", e));
+      after(async () => {
+        try {
+          const res = await fetch(webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name,
+              email: email || "",
+              attending,
+              welcome_party: welcome_party || "",
+              dietary: dietary || "",
+              submitted_at: new Date().toISOString(),
+            }),
+          });
+          if (!res.ok) {
+            throw new Error(`webhook responded with ${res.status}`);
+          }
+        } catch (e) {
+          console.error("Sheet sync failed:", e);
+        }
+      });
     }
 
     return NextResponse.json({ success: true, id: result.lastInsertRowid });

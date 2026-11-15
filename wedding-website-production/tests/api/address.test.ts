@@ -17,6 +17,19 @@ vi.mock("@/lib/db", () => ({
   default: { prepare: vi.fn() },
 }));
 
+// The route schedules its Sheet sync + email with Next's `after()`, which
+// throws outside a request scope. Run the task right away here; flushPromises()
+// below drives the async work to completion.
+vi.mock("next/server", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("next/server")>();
+  return {
+    ...actual,
+    after: (task: () => unknown) => {
+      void task();
+    },
+  };
+});
+
 vi.mock("@/lib/email", () => ({
   sendNotification: vi.fn().mockResolvedValue(undefined),
 }));
@@ -136,8 +149,8 @@ describe("POST /api/address", () => {
   });
 
   it("fires the webhook when GOOGLE_SHEET_WEBHOOK_URL is set", async () => {
-    // The route fires fetch() without awaiting it (fire-and-forget), so we
-    // only assert the call was made, not that it resolved.
+    // The route schedules fetch() with after(), so we only assert the call was
+    // made, not that it resolved.
     const fetchSpy = vi.spyOn(global, "fetch").mockResolvedValue(new Response("ok"));
     process.env.GOOGLE_SHEET_WEBHOOK_URL = "https://example.com/webhook";
 
