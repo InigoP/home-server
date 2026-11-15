@@ -10,7 +10,6 @@ export default function Gallery() {
         Our Story
       </h2>
 
-      {/* Horizontal film strip */}
       <div className="overflow-x-auto">
         <div
           style={{

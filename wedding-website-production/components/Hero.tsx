@@ -6,17 +6,18 @@ export default function Hero() {
       className="relative flex min-h-[85vh] flex-col items-center justify-center px-6 text-center overflow-hidden"
       style={{ background: "var(--bg)" }}
     >
-      <div className="sprocket-strip absolute top-0 left-0 right-0" />
-
-      <div>
+      <div className="w-full max-w-lg">
         <p
-          className="mb-6 text-[0.65rem] uppercase tracking-[0.4em] opacity-50"
+          className="animate-fade-up text-[0.65rem] uppercase tracking-[0.4em] opacity-50 mb-6"
           style={{ fontFamily: "var(--font-se)" }}
         >
           — now showing —
         </p>
 
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+        <div
+          className="animate-fade-up flex flex-wrap items-center justify-center gap-3 mb-6"
+          style={{ animationDelay: "0.08s" }}
+        >
           <div
             className="inline-block"
             style={{ background: "var(--pink)", padding: "0.05rem 0.75rem 0.05rem 0" }}
@@ -30,17 +31,17 @@ export default function Hero() {
           </div>
           <span
             className="font-display"
-            style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)", color: "var(--orange)" }}
+            style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)", color: "var(--black)" }}
           >
             &amp;
           </span>
           <div
             className="inline-block"
-            style={{ background: "var(--yellow)", padding: "0.05rem 0.75rem 0.05rem 0" }}
+            style={{ background: "var(--blue-purple)", padding: "0.05rem 0.75rem 0.05rem 0" }}
           >
             <span
               className="block font-display leading-none"
-              style={{ fontSize: "clamp(2.5rem, 8vw, 4.5rem)", color: "var(--black)" }}
+              style={{ fontSize: "clamp(2.5rem, 8vw, 4.5rem)", color: "var(--cream)" }}
             >
               Inigo
             </span>
@@ -48,8 +49,8 @@ export default function Hero() {
         </div>
 
         <div
-          className="relative inline-block px-6 py-4"
-          style={{ border: "2.5px solid var(--black)" }}
+          className="animate-fade-up relative inline-block px-6 py-4 mb-8"
+          style={{ border: "2.5px solid var(--black)", animationDelay: "0.16s" }}
         >
           <span
             className="absolute text-[0.6rem] uppercase tracking-[0.12em] px-2"
@@ -72,7 +73,7 @@ export default function Hero() {
           </p>
         </div>
 
-        <div className="mt-8">
+        <div className="animate-fade-up" style={{ animationDelay: "0.24s" }}>
           <FlipLink
             href="/rsvp"
             className="inline-block font-display text-sm uppercase tracking-[0.08em] px-10 py-3 text-white transition-transform hover:-translate-y-0.5"
