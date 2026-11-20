@@ -19,7 +19,7 @@ export default function SceneNext({ href, label }: Props) {
         <span
           style={{
             fontFamily: "var(--font-se)",
-            fontSize: "0.6rem",
+            fontSize: "0.78rem",
             letterSpacing: "0.25em",
             textTransform: "uppercase",
             color: "rgba(26,21,16,0.4)",
@@ -30,7 +30,7 @@ export default function SceneNext({ href, label }: Props) {
         <span
           className="font-display flex items-center gap-3 transition-gap"
           style={{
-            fontSize: "clamp(1.8rem, 5vw, 3rem)",
+            fontSize: "clamp(2.34rem, 6.5vw, 3.9rem)",
             color: "var(--black)",
             lineHeight: 1,
           }}

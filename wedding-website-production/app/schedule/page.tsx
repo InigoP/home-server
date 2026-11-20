@@ -1,5 +1,6 @@
 import Events from "@/components/Events";
 import SceneNext from "@/components/SceneNext";
+import ScrollAsset from "@/components/ScrollAsset";
 
 const schedule = [
   {
@@ -97,6 +98,7 @@ export default function Schedule() {
         </div>
       </section>
 
+      <ScrollAsset />
       <SceneNext href="/venue" label="Venue" />
     </main>
   );

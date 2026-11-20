@@ -106,7 +106,7 @@ input:focus, select:focus, textarea:focus {
   color: var(--black);
   text-decoration: none;
   font-family: var(--font-se), 'Courier Prime', monospace;
-  font-size: 0.72rem;
+  font-size: 0.94rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   line-height: 1.5;

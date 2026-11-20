@@ -14,7 +14,7 @@ export default function Hero() {
           className="animate-fade-up uppercase mb-5 opacity-50"
           style={{
             fontFamily: "var(--font-se)",
-            fontSize: "0.72rem",
+            fontSize: "0.94rem",
             letterSpacing: "0.3em",
             color: "var(--black)",
           }}
@@ -38,7 +38,7 @@ export default function Hero() {
             <span
               className="block font-display"
               style={{
-                fontSize: "clamp(3rem, 10vw, 5rem)",
+                fontSize: "clamp(3.9rem, 13vw, 6.5rem)",
                 letterSpacing: "0.1em",
                 color: "var(--cream)",
                 lineHeight: 0.9,
@@ -50,7 +50,7 @@ export default function Hero() {
           <span
             className="font-display"
             style={{
-              fontSize: "clamp(2rem, 5vw, 2.75rem)",
+              fontSize: "clamp(2.6rem, 6.5vw, 3.58rem)",
               letterSpacing: "0.1em",
               color: "var(--black)",
               flexShrink: 0,
@@ -70,7 +70,7 @@ export default function Hero() {
             <span
               className="block font-display"
               style={{
-                fontSize: "clamp(3rem, 10vw, 5rem)",
+                fontSize: "clamp(3.9rem, 13vw, 6.5rem)",
                 letterSpacing: "0.1em",
                 color: "var(--cream)",
                 lineHeight: 0.9,
@@ -97,7 +97,7 @@ export default function Hero() {
               background: "var(--bg)",
               padding: "0 0.35rem",
               fontFamily: "var(--font-se)",
-              fontSize: "0.65rem",
+              fontSize: "0.85rem",
               letterSpacing: "0.12em",
               color: "var(--pink)",
               transform: "rotate(4deg)",
@@ -108,7 +108,7 @@ export default function Hero() {
           <p
             className="font-display"
             style={{
-              fontSize: "1.5rem",
+              fontSize: "1.95rem",
               letterSpacing: "0.1em",
               marginBottom: "0.45rem",
             }}
@@ -118,7 +118,7 @@ export default function Hero() {
           <p
             style={{
               fontFamily: "var(--font-se)",
-              fontSize: "0.78rem",
+              fontSize: "1.01rem",
               letterSpacing: "0.15em",
               lineHeight: 1.55,
             }}
@@ -128,7 +128,7 @@ export default function Hero() {
           <p
             style={{
               fontFamily: "var(--font-se)",
-              fontSize: "0.68rem",
+              fontSize: "0.88rem",
               letterSpacing: "0.15em",
               marginTop: "0.2rem",
             }}
@@ -144,8 +144,9 @@ export default function Hero() {
         >
           <FlipLink
             href="/rsvp"
-            className="inline-block font-display text-sm uppercase tracking-[0.08em] px-10 py-3 text-white transition-transform hover:-translate-y-0.5"
+            className="inline-block font-display uppercase tracking-[0.08em] px-10 py-3 text-white transition-transform hover:-translate-y-0.5"
             style={{
+              fontSize: "1.14rem",
               background: "var(--pink)",
               border: "2.5px solid var(--black)",
               boxShadow: "4px 4px 0 var(--black)",

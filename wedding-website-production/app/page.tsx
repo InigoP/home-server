@@ -1,16 +1,17 @@
 import Hero from "@/components/Hero";
 import Gallery from "@/components/Gallery";
-import ScrollAsset from "@/components/ScrollAsset";
-import Reveal from "@/components/Reveal";
 import SceneNext from "@/components/SceneNext";
+import FilmCountdown from "@/components/FilmCountdown";
 
 export default function Home() {
   return (
-    <main className="flex-1">
-      <Hero />
-      <Reveal><Gallery /></Reveal>
-      <ScrollAsset />
-      <SceneNext href="/schedule" label="Schedule" />
-    </main>
+    <>
+      <FilmCountdown />
+      <main className="flex-1">
+        <Hero />
+        <SceneNext href="/schedule" label="Schedule" />
+      </main>
+      <Gallery />
+    </>
   );
 }
