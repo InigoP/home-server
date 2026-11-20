@@ -1,3 +1,6 @@
+import Events from "@/components/Events";
+import SceneNext from "@/components/SceneNext";
+
 const schedule = [
   {
     scene: "01",
@@ -27,8 +30,8 @@ const schedule = [
 
 export default function Schedule() {
   return (
-    <main className="max-w-2xl mx-auto px-6 py-16">
-      <div className="mb-10">
+    <main className="flex-1">
+      <div className="max-w-4xl mx-auto px-6 pt-16">
         <p
           className="text-[0.65rem] uppercase tracking-[0.4em] opacity-50 mb-1"
           style={{ fontFamily: "var(--font-se)" }}
@@ -37,63 +40,64 @@ export default function Schedule() {
         </p>
         <h1 className="font-display text-3xl">Weekend of June 6–7</h1>
       </div>
+      <Events />
 
-      <div
-        style={{
-          border: "2.5px solid var(--black)",
-          boxShadow: "5px 5px 0 var(--black)",
-          background: "var(--cream)",
-          overflow: "hidden",
-        }}
-      >
-        {/* Film strip header */}
-        <div className="sprocket-strip" />
+      <section className="max-w-2xl mx-auto px-6 pb-16">
         <div
-          className="text-center py-2 px-4 text-[0.55rem] uppercase tracking-[0.2em]"
           style={{
-            background: "var(--black)",
-            color: "rgba(245, 241, 230, 0.4)",
-            fontFamily: "var(--font-se)",
+            border: "2.5px solid var(--black)",
+            boxShadow: "5px 5px 0 var(--black)",
+            background: "var(--cream)",
+            overflow: "hidden",
           }}
         >
-          Sonia &amp; Inigo &nbsp;·&nbsp; Ext. Montréal &nbsp;·&nbsp; June 2026
-        </div>
-        <div className="sprocket-strip" />
-
-        {/* Events */}
-        {schedule.map((item, i) => (
           <div
-            key={item.scene}
+            className="text-center py-2 px-4 text-[0.55rem] uppercase tracking-[0.2em]"
             style={{
-              borderTop: i > 0 ? "1.5px dashed rgba(26,21,16,0.15)" : undefined,
-              padding: "1.25rem 1.5rem",
+              background: "var(--black)",
+              color: "rgba(245, 241, 230, 0.4)",
+              fontFamily: "var(--font-se)",
             }}
           >
-            <div className="flex items-start gap-4">
-              <span
-                className="font-display leading-none opacity-20 shrink-0"
-                style={{ fontSize: "2.5rem", minWidth: "2.5rem" }}
-              >
-                {item.scene}
-              </span>
-              <div className="flex-1">
-                <h2 className="font-display text-lg" style={{ color: "var(--black)" }}>
-                  {item.title}
-                </h2>
-                <p className="text-sm mt-1 opacity-70" style={{ fontFamily: "var(--font-se)" }}>
-                  {item.day} &nbsp;·&nbsp; {item.time}
-                </p>
-                <p className="text-sm opacity-70" style={{ fontFamily: "var(--font-se)" }}>
-                  {item.location}
-                </p>
-                <p className="text-sm mt-2 opacity-45" style={{ fontFamily: "var(--font-se)" }}>
-                  {item.note}
-                </p>
+            Sonia &amp; Inigo &nbsp;·&nbsp; Ext. Montréal &nbsp;·&nbsp; June 2026
+          </div>
+
+          {schedule.map((item, i) => (
+            <div
+              key={item.scene}
+              style={{
+                borderTop: i > 0 ? "1.5px dashed rgba(26,21,16,0.15)" : undefined,
+                padding: "1.25rem 1.5rem",
+              }}
+            >
+              <div className="flex items-start gap-4">
+                <span
+                  className="font-display leading-none opacity-20 shrink-0"
+                  style={{ fontSize: "2.5rem", minWidth: "2.5rem" }}
+                >
+                  {item.scene}
+                </span>
+                <div className="flex-1">
+                  <h2 className="font-display text-lg" style={{ color: "var(--black)" }}>
+                    {item.title}
+                  </h2>
+                  <p className="text-sm mt-1 opacity-70" style={{ fontFamily: "var(--font-se)" }}>
+                    {item.day} &nbsp;·&nbsp; {item.time}
+                  </p>
+                  <p className="text-sm opacity-70" style={{ fontFamily: "var(--font-se)" }}>
+                    {item.location}
+                  </p>
+                  <p className="text-sm mt-2 opacity-45" style={{ fontFamily: "var(--font-se)" }}>
+                    {item.note}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </section>
+
+      <SceneNext href="/venue" label="Venue" />
     </main>
   );
 }

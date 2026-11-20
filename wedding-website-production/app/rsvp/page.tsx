@@ -90,7 +90,7 @@ export default function RsvpPage() {
             {/* Header */}
             <div
               style={{
-                background: "var(--yellow)",
+                background: "var(--blue-purple)",
                 borderBottom: "2.5px solid var(--black)",
                 padding: "0.65rem 1.5rem",
                 display: "flex",
@@ -111,7 +111,7 @@ export default function RsvpPage() {
                     Please RSVP by April 1, 2026.
                   </p>
 
-                  <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                  <form onSubmit={handleSubmit}>
                     <label className="flex flex-col gap-1">
                       <span style={labelStyle}>Name</span>
                       <input
@@ -168,11 +168,9 @@ export default function RsvpPage() {
                     <button
                       type="submit"
                       disabled={status === "saving"}
-                      className="mt-1 py-3 font-display text-sm uppercase tracking-[0.04em] text-white transition-transform hover:translate-x-[2px] hover:translate-y-[2px]"
+                      className="btn-sketch mt-1 py-3 font-display text-sm uppercase tracking-[0.04em] text-white"
                       style={{
                         background: status === "saving" ? "#ccc" : "var(--pink)",
-                        border: "2.5px solid var(--black)",
-                        boxShadow: status === "saving" ? "none" : "4px 4px 0 var(--black)",
                         cursor: status === "saving" ? "default" : "pointer",
                       }}
                     >
@@ -200,7 +198,7 @@ export default function RsvpPage() {
                   <span
                     className="inline-block"
                     style={{
-                      background: "var(--yellow)",
+                      background: "var(--blue-purple)",
                       padding: "0.3rem 0.8rem",
                       border: "2px solid var(--black)",
                       boxShadow: "2px 2px 0 var(--black)",

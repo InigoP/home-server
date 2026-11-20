@@ -1,3 +1,5 @@
+import SceneNext from "@/components/SceneNext";
+
 export default function Registry() {
   return (
     <main className="max-w-2xl mx-auto px-6 py-16">
@@ -36,6 +38,7 @@ export default function Registry() {
           </p>
         </div>
       </div>
+      <SceneNext href="/faq" label="FAQ" />
     </main>
   );
 }

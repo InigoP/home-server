@@ -4,8 +4,6 @@ export default function ComingSoon() {
       className="relative flex min-h-screen flex-1 flex-col items-center justify-center overflow-hidden px-6 py-20 text-center"
       style={{ background: "var(--bg)" }}
     >
-      <div className="sprocket-strip absolute top-0 left-0 right-0" />
-
       <div className="w-full max-w-lg">
         <p
           className="animate-fade-up text-[0.65rem] uppercase tracking-[0.4em] opacity-50 mb-6"
@@ -89,7 +87,6 @@ export default function ComingSoon() {
         </p>
       </div>
 
-      <div className="sprocket-strip absolute bottom-0 left-0 right-0" />
     </main>
   );
 }

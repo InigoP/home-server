@@ -2,46 +2,79 @@ import FlipLink from "@/components/FlipLink";
 
 export default function Hero() {
   return (
-    <section
-      className="relative flex min-h-[85vh] flex-col items-center justify-center px-6 text-center overflow-hidden"
-      style={{ background: "var(--bg)" }}
-    >
-      <div className="w-full max-w-lg">
+    <section className="w-full">
+      {/* Film section — full-bleed */}
+      <div className="sprocket-strip" />
+
+      <div
+        className="relative flex flex-col items-center text-center px-6 py-16 w-full"
+        style={{ background: "#359c90" }}
+      >
         <p
-          className="animate-fade-up text-[0.65rem] uppercase tracking-[0.4em] opacity-50 mb-6"
-          style={{ fontFamily: "var(--font-se)" }}
+          className="animate-fade-up uppercase mb-5 opacity-50"
+          style={{
+            fontFamily: "var(--font-se)",
+            fontSize: "0.72rem",
+            letterSpacing: "0.3em",
+            color: "var(--black)",
+          }}
         >
           — now showing —
         </p>
 
         <div
-          className="animate-fade-up flex flex-wrap items-center justify-center gap-3 mb-6"
+          className="animate-fade-up flex flex-wrap items-center justify-center gap-3 mb-10"
           style={{ animationDelay: "0.08s" }}
         >
           <div
             className="inline-block"
-            style={{ background: "var(--pink)", padding: "0.05rem 0.75rem 0.05rem 0" }}
+            style={{
+              background: "var(--pink)",
+              padding: "0.05rem 0.6rem 0.05rem 0",
+              lineHeight: 1,
+              flexShrink: 0,
+            }}
           >
             <span
-              className="block font-display leading-none"
-              style={{ fontSize: "clamp(2.5rem, 8vw, 4.5rem)", color: "var(--cream)" }}
+              className="block font-display"
+              style={{
+                fontSize: "clamp(3rem, 10vw, 5rem)",
+                letterSpacing: "0.1em",
+                color: "var(--cream)",
+                lineHeight: 0.9,
+              }}
             >
               Sonia
             </span>
           </div>
           <span
             className="font-display"
-            style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)", color: "var(--black)" }}
+            style={{
+              fontSize: "clamp(2rem, 5vw, 2.75rem)",
+              letterSpacing: "0.1em",
+              color: "var(--black)",
+              flexShrink: 0,
+            }}
           >
             &amp;
           </span>
           <div
             className="inline-block"
-            style={{ background: "var(--blue-purple)", padding: "0.05rem 0.75rem 0.05rem 0" }}
+            style={{
+              background: "var(--blue-purple)",
+              padding: "0.05rem 0.6rem 0.05rem 0",
+              lineHeight: 1,
+              flexShrink: 0,
+            }}
           >
             <span
-              className="block font-display leading-none"
-              style={{ fontSize: "clamp(2.5rem, 8vw, 4.5rem)", color: "var(--cream)" }}
+              className="block font-display"
+              style={{
+                fontSize: "clamp(3rem, 10vw, 5rem)",
+                letterSpacing: "0.1em",
+                color: "var(--cream)",
+                lineHeight: 0.9,
+              }}
             >
               Inigo
             </span>
@@ -49,31 +82,66 @@ export default function Hero() {
         </div>
 
         <div
-          className="animate-fade-up relative inline-block px-6 py-4 mb-8"
-          style={{ border: "2.5px solid var(--black)", animationDelay: "0.16s" }}
+          className="animate-fade-up relative inline-block"
+          style={{
+            border: "2.5px solid var(--black)",
+            padding: "0.9rem 1.1rem",
+            animationDelay: "0.16s",
+          }}
         >
           <span
-            className="absolute text-[0.6rem] uppercase tracking-[0.12em] px-2"
+            className="absolute"
             style={{
               top: "-0.6rem",
-              left: "0.75rem",
+              right: "-0.5rem",
               background: "var(--bg)",
+              padding: "0 0.35rem",
               fontFamily: "var(--font-se)",
+              fontSize: "0.65rem",
+              letterSpacing: "0.12em",
               color: "var(--pink)",
+              transform: "rotate(4deg)",
             }}
           >
-            ★ Wedding ★
+            ★ WEDDING ★
           </span>
-          <p className="font-display text-xl mb-1">June 7, 2026</p>
-          <p style={{ fontFamily: "var(--font-se)", fontSize: "0.85rem", lineHeight: 1.55 }}>
+          <p
+            className="font-display"
+            style={{
+              fontSize: "1.5rem",
+              letterSpacing: "0.1em",
+              marginBottom: "0.45rem",
+            }}
+          >
+            June 7, 2026
+          </p>
+          <p
+            style={{
+              fontFamily: "var(--font-se)",
+              fontSize: "0.78rem",
+              letterSpacing: "0.15em",
+              lineHeight: 1.55,
+            }}
+          >
             Pavillon de la Jamaïque
           </p>
-          <p style={{ fontFamily: "var(--font-se)", fontSize: "0.75rem", color: "#777", marginTop: "0.2rem" }}>
+          <p
+            style={{
+              fontFamily: "var(--font-se)",
+              fontSize: "0.68rem",
+              letterSpacing: "0.15em",
+              marginTop: "0.2rem",
+            }}
+          >
             Montréal, Québec
           </p>
         </div>
 
-        <div className="animate-fade-up" style={{ animationDelay: "0.24s" }}>
+        {/* RSVP button — inside teal panel, above bottom sprocket */}
+        <div
+          className="animate-fade-up mt-20"
+          style={{ animationDelay: "0.24s" }}
+        >
           <FlipLink
             href="/rsvp"
             className="inline-block font-display text-sm uppercase tracking-[0.08em] px-10 py-3 text-white transition-transform hover:-translate-y-0.5"
@@ -88,7 +156,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="sprocket-strip absolute bottom-0 left-0 right-0" />
+      <div className="sprocket-strip" />
     </section>
   );
 }

@@ -4,6 +4,7 @@ import { Bebas_Neue, Courier_Prime } from "next/font/google";
 import "./globals.css";
 import ComingSoon from "@/components/ComingSoon";
 import Nav from "@/components/Nav";
+import SideSprockets from "@/components/SideSprockets";
 
 const bebasNeue = Bebas_Neue({
   weight: "400",
@@ -36,6 +37,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${bebasNeue.variable} ${courierPrime.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
+        <SideSprockets />
         {comingSoon ? (
           <ComingSoon />
         ) : (

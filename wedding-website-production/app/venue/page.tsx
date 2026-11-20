@@ -1,3 +1,5 @@
+import SceneNext from "@/components/SceneNext";
+
 export default function Venue() {
   return (
     <main className="max-w-2xl mx-auto px-6 py-16">
@@ -40,6 +42,7 @@ export default function Venue() {
           </p>
         </div>
       </div>
+      <SceneNext href="/registry" label="Registry" />
     </main>
   );
 }
