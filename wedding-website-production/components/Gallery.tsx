@@ -30,15 +30,33 @@ export default function Gallery() {
     photoRefs.current.forEach((el, i) => {
       if (!el) return;
 
-      // Push each photo to a side, outside the center hero region.
       const side = i === 0 ? -1 : 1;
-      const sideBase = Math.max(window.innerWidth * 0.3, 340);
-      const sideJitter = Math.random() * 90;
-      const verticalJitter = (Math.random() * 2 - 1) * Math.min(window.innerHeight * 0.22, 200);
+      const isMobile = window.innerWidth < 640;
 
-      el.style.left = `${side * (sideBase + sideJitter)}px`;
-      el.style.top = `${verticalJitter}px`;
-      el.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 20 - 10}deg)`;
+      let leftOffset: number;
+      let topOffset: number;
+
+      if (isMobile) {
+        // Mobile: diagonal stack (upper-left, lower-right) with tight side offset
+        const sideBase = window.innerWidth * 0.14;
+        const sideJitter = Math.random() * 25;
+        const verticalBase = side * window.innerHeight * 0.28;
+        const verticalJitter = (Math.random() * 2 - 1) * window.innerHeight * 0.06;
+        leftOffset = side * (sideBase + sideJitter);
+        topOffset = verticalBase + verticalJitter;
+      } else {
+        // Desktop: side-by-side, outside the center hero region
+        const sideBase = Math.max(window.innerWidth * 0.3, 340);
+        const sideJitter = Math.random() * 90;
+        const verticalJitter = (Math.random() * 2 - 1) * Math.min(window.innerHeight * 0.22, 200);
+        leftOffset = side * (sideBase + sideJitter);
+        topOffset = verticalJitter;
+      }
+
+      el.style.left = `${leftOffset}px`;
+      el.style.top = `${topOffset}px`;
+      const mobileScale = isMobile ? 0.25 : 1;
+      el.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 20 - 10}deg) scale(${mobileScale})`;
       el.style.zIndex = String(i + 1);
 
       let previousTouch: Touch | undefined;
