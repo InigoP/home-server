@@ -1,15 +1,28 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const photos = [
-  { src: "/example_pic.jpg", caption: "Sonia & Inigo" },
-  { src: "/example_pic.jpg", caption: "June 7, 2026" },
+  {
+    src: "/grand_canyon.jpg",
+    // front: "Sonia & Inigo",
+    back: "We go camping :)",
+  },
+  {
+    src: "/proposal.jpeg",
+    // front: "June 7, 2026",
+    back: "Surprise proposal!!",
+  },
 ];
+
+const CARD_WIDTH = 220;
+const CARD_HEIGHT = 244; // 220 image + 24 caption strip
+const CLICK_THRESHOLD = 6; // px of movement below which a release is treated as a click
 
 export default function Gallery() {
   const photoRefs = useRef<(HTMLDivElement | null)[]>([]);
   const zCounter = useRef(photos.length);
+  const [flipped, setFlipped] = useState<boolean[]>(() => photos.map(() => false));
 
   useEffect(() => {
     const cleanups: (() => void)[] = [];
@@ -18,7 +31,7 @@ export default function Gallery() {
       if (!el) return;
 
       // Push each photo to a side, outside the center hero region.
-      const side = i === 0 ? -1 : 1; // first photo → left, second → right
+      const side = i === 0 ? -1 : 1;
       const sideBase = Math.max(window.innerWidth * 0.3, 340);
       const sideJitter = Math.random() * 90;
       const verticalJitter = (Math.random() * 2 - 1) * Math.min(window.innerHeight * 0.22, 200);
@@ -29,6 +42,8 @@ export default function Gallery() {
       el.style.zIndex = String(i + 1);
 
       let previousTouch: Touch | undefined;
+      let dragDistance = 0;
+      let interactive = false;
 
       function update(e: MouseEvent | TouchEvent) {
         let dx: number, dy: number;
@@ -41,6 +56,7 @@ export default function Gallery() {
           dx = (e as MouseEvent).movementX;
           dy = (e as MouseEvent).movementY;
         }
+        dragDistance += Math.abs(dx) + Math.abs(dy);
         el!.style.top = `${parseInt(el!.style.top || "0") + dy}px`;
         el!.style.left = `${parseInt(el!.style.left || "0") + dx}px`;
       }
@@ -52,9 +68,16 @@ export default function Gallery() {
         document.removeEventListener("touchmove", update);
         document.removeEventListener("mouseup", stop);
         document.removeEventListener("touchend", stop);
+
+        if (interactive && dragDistance < CLICK_THRESHOLD) {
+          setFlipped((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
+        }
+        interactive = false;
       }
 
       function start() {
+        dragDistance = 0;
+        interactive = true;
         el!.style.zIndex = String(++zCounter.current);
         el!.style.cursor = "grabbing";
         document.addEventListener("mousemove", update);
@@ -99,40 +122,103 @@ export default function Gallery() {
               position: "absolute",
               top: 0,
               left: 0,
-              background: "#fff",
-              padding: "8px 8px 0 8px",
-              boxShadow: "0 4px 28px rgba(26,21,16,0.28)",
+              width: `${CARD_WIDTH}px`,
+              height: `${CARD_HEIGHT}px`,
               transform: "translate(-50%, -50%)",
               userSelect: "none",
               cursor: "grab",
               pointerEvents: "auto",
+              perspective: "1100px",
+              boxShadow: "0 4px 28px rgba(26,21,16,0.28)",
             }}
           >
-            <img
-              src={photo.src}
-              alt={photo.caption}
-              style={{
-                display: "block",
-                width: "220px",
-                height: "220px",
-                objectFit: "cover",
-                pointerEvents: "none",
-              }}
-            />
             <div
               style={{
-                width: "220px",
-                height: "44px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily: "var(--font-pm)",
-                fontSize: "1.3rem",
-                color: "var(--black)",
-                letterSpacing: "0.04em",
+                position: "relative",
+                width: "100%",
+                height: "100%",
+                transformStyle: "preserve-3d",
+                transition: "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)",
+                transform: flipped[i] ? "rotateY(180deg)" : "rotateY(0deg)",
               }}
             >
-              {photo.caption}
+              {/* Front: photo + flip hint */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  background: "#fff",
+                  padding: "8px 8px 0 8px",
+                  boxSizing: "border-box",
+                }}
+              >
+                <img
+                  src={photo.src}
+                  alt=""
+                  draggable={false}
+                  style={{
+                    display: "block",
+                    width: `${CARD_WIDTH - 16}px`,
+                    height: `${CARD_WIDTH - 16}px`,
+                    objectFit: "cover",
+                    pointerEvents: "none",
+                    filter: "sepia(0.4) saturate(1.3) contrast(0.9) brightness(1.05) hue-rotate(-8deg)",
+                  }}
+                />
+                <div
+                  style={{
+                    width: `${CARD_WIDTH - 16}px`,
+                    height: "24px",
+                    display: "flex",
+                    alignItems: "flex-end",
+                    justifyContent: "center",
+                    gap: "0.4em",
+                    paddingBottom: "1px",
+                    boxSizing: "border-box",
+                    lineHeight: 1,
+                    fontFamily: "var(--font-se)",
+                    fontSize: "0.6rem",
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    color: "rgba(26, 21, 16, 0.45)",
+                  }}
+                >
+                  <span style={{ fontSize: "0.75rem", lineHeight: 1 }}>↻</span>
+                  click to flip
+                </div>
+              </div>
+
+              {/* Back: handwritten-style note */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  transform: "rotateY(180deg)",
+                  background: "var(--cream)",
+                  padding: "22px 20px",
+                  boxSizing: "border-box",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textAlign: "center",
+                }}
+              >
+                <p
+                  style={{
+                    fontFamily: "var(--font-se)",
+                    fontSize: "0.95rem",
+                    lineHeight: 1.55,
+                    color: "var(--black)",
+                    whiteSpace: "pre-line",
+                  }}
+                >
+                  {photo.back}
+                </p>
+              </div>
             </div>
           </div>
         ))}
@@ -142,7 +228,7 @@ export default function Gallery() {
         className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[0.78rem] uppercase tracking-[0.2em] opacity-40 pointer-events-none"
         style={{ fontFamily: "var(--font-se)" }}
       >
-        drag to explore
+        click to flip · drag to move
       </p>
     </section>
   );
