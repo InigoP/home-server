@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import SceneNav from "@/components/SceneNav";
 
 export default function RsvpPage() {
   const [form, setForm] = useState({
@@ -48,9 +49,10 @@ export default function RsvpPage() {
 
   return (
     <main
-      className="min-h-screen flex items-start justify-center p-8 pt-16"
+      className="min-h-screen flex flex-col"
       style={{ background: "var(--bg)" }}
     >
+      <div className="flex-1 flex items-start justify-center p-8 pt-16">
       <div className="w-full max-w-md">
         {/* Reply card placard */}
         <div className="relative mx-2" style={{ transform: "rotate(-0.75deg)" }}>
@@ -108,7 +110,7 @@ export default function RsvpPage() {
               {status !== "done" ? (
                 <>
                   <p className="text-sm opacity-60" style={{ fontFamily: "var(--font-se)" }}>
-                    Please RSVP by April 1, 2026.
+                    Please RSVP by April 1, 2027.
                   </p>
 
                   <form onSubmit={handleSubmit}>
@@ -216,6 +218,8 @@ export default function RsvpPage() {
           </div>
         </div>
       </div>
+      </div>
+      <SceneNav prev={{ href: "/faq", label: "FAQ" }} />
     </main>
   );
 }

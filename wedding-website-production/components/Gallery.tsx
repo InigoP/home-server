@@ -126,7 +126,7 @@ export default function Gallery() {
         left: 0,
         width: "100%",
         height: "100vh",
-        overflow: "hidden",
+        overflow: "visible",
         pointerEvents: "none",
         zIndex: 40,
       }}
@@ -241,13 +241,6 @@ export default function Gallery() {
           </div>
         ))}
       </div>
-
-      <p
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[0.78rem] uppercase tracking-[0.2em] opacity-40 pointer-events-none"
-        style={{ fontFamily: "var(--font-se)" }}
-      >
-        click to flip · drag to move
-      </p>
     </section>
   );
 }

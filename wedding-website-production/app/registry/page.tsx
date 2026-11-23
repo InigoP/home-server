@@ -1,4 +1,4 @@
-import SceneNext from "@/components/SceneNext";
+import SceneNav from "@/components/SceneNav";
 
 export default function Registry() {
   return (
@@ -38,7 +38,10 @@ export default function Registry() {
           </p>
         </div>
       </div>
-      <SceneNext href="/faq" label="FAQ" />
+      <SceneNav
+        prev={{ href: "/venue", label: "Venue" }}
+        next={{ href: "/faq", label: "FAQ" }}
+      />
     </main>
   );
 }

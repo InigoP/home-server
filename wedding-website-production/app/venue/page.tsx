@@ -1,4 +1,4 @@
-import SceneNext from "@/components/SceneNext";
+import SceneNav from "@/components/SceneNav";
 
 export default function Venue() {
   return (
@@ -42,7 +42,10 @@ export default function Venue() {
           </p>
         </div>
       </div>
-      <SceneNext href="/registry" label="Registry" />
+      <SceneNav
+        prev={{ href: "/schedule", label: "Schedule" }}
+        next={{ href: "/registry", label: "Registry" }}
+      />
     </main>
   );
 }

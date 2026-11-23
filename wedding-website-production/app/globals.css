@@ -11,6 +11,8 @@ html {
   --blue-purple: #5a6ec8;  /* slate blue-purple — Inigo name slab, card headers */
   --cream:       #F5F1E6;  /* off-white — name text, light surfaces */
   --film:        var(--black); /* sprocket strip colour */
+  --nav-height:  66px;     /* always-on fixed nav height */
+  --hero-height: calc(100vh - var(--nav-height) - 3rem); /* full viewport minus nav + two sprocket strips */
 }
 
 @theme inline {
@@ -22,11 +24,22 @@ html {
 
 body {
   background-color: var(--bg);
-  background-image: radial-gradient(circle, rgba(26, 21, 16, 0.07) 1px, transparent 1px);
-  background-size: 10px 10px;
   color: var(--black);
   font-family: var(--font-se), 'Courier Prime', monospace;
   font-size: 1rem;
+  padding-top: var(--nav-height);
+}
+
+/* Fixed dot-pattern overlay — carries through to the teal hero, matches save-the-date.css */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--black) 1px, transparent 1px);
+  background-size: 10px 10px;
+  opacity: 0.055;
+  pointer-events: none;
+  z-index: 999;
 }
 
 ::selection {
@@ -82,6 +95,36 @@ input:focus, select:focus, textarea:focus {
 }
 
 @media (prefers-reduced-motion: reduce) { .page-wipe, .page-wipe::before { animation: none; } }
+
+/* Page transitions via View Transitions API — forward slides left, back slides right. */
+@keyframes page-slide-out-left {
+  to { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes page-slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+}
+@keyframes page-slide-out-right {
+  to { transform: translateX(100%); opacity: 0; }
+}
+@keyframes page-slide-in-left {
+  from { transform: translateX(-100%); opacity: 0; }
+}
+::view-transition-old(root) {
+  animation: page-slide-out-left 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+::view-transition-new(root) {
+  animation: page-slide-in-right 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+html[data-transition="back"]::view-transition-old(root) {
+  animation: page-slide-out-right 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+html[data-transition="back"]::view-transition-new(root) {
+  animation: page-slide-in-left 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+}
 
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(16px); }

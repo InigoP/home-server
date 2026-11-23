@@ -4,7 +4,7 @@ import { Bebas_Neue, Courier_Prime } from "next/font/google";
 import "./globals.css";
 import ComingSoon from "@/components/ComingSoon";
 import Nav from "@/components/Nav";
-import SideSprockets from "@/components/SideSprockets";
+import ViewTransitionLinks from "@/components/ViewTransitionLinks";
 
 const bebasNeue = Bebas_Neue({
   weight: "400",
@@ -20,7 +20,7 @@ const courierPrime = Courier_Prime({
 });
 
 export const metadata: Metadata = {
-  title: "Sonia & Inigo — June 7, 2026",
+  title: "Sonia & Inigo — June 7, 2027",
   description: "Wedding website for Sonia & Inigo at Pavillon de la Jamaïque, Montréal.",
 };
 
@@ -37,7 +37,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${bebasNeue.variable} ${courierPrime.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
-        <SideSprockets />
+        <ViewTransitionLinks />
         {comingSoon ? (
           <ComingSoon />
         ) : (

@@ -1,5 +1,5 @@
 import Accommodations from "@/components/Accommodations";
-import SceneNext from "@/components/SceneNext";
+import SceneNav from "@/components/SceneNav";
 
 export default function Faq() {
   return (
@@ -50,7 +50,10 @@ export default function Faq() {
 
       <Accommodations />
 
-      <SceneNext href="/rsvp" label="RSVP" />
+      <SceneNav
+        prev={{ href: "/registry", label: "Registry" }}
+        next={{ href: "/rsvp", label: "RSVP" }}
+      />
     </main>
   );
 }

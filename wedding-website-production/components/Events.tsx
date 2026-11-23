@@ -1,22 +1,34 @@
-const events = [
+import Link from "next/link";
+
+interface Event {
+  scene: string;
+  title: string;
+  date: string;
+  place: string;
+  desc: string;
+  href?: string;
+}
+
+const events: Event[] = [
   {
     scene: "01",
     title: "Welcome Party",
-    date: "Saturday, June 6 · 7:00 PM",
+    date: "Sunday, June 6 · 7:00 PM",
     place: "Montréal",
     desc: "Casual drinks and mingling.",
+    href: "/schedule/welcome-party",
   },
   {
     scene: "02",
     title: "Ceremony",
-    date: "Sunday, June 7 · 4:00 PM",
+    date: "Monday, June 7 · 4:00 PM",
     place: "Pavillon de la Jamaïque",
     desc: "Please arrive by 3:45 PM.",
   },
   {
     scene: "03",
     title: "Reception",
-    date: "Sunday, June 7 · 6:00 PM",
+    date: "Monday, June 7 · 6:00 PM",
     place: "Pavillon de la Jamaïque",
     desc: "Dinner, dancing, and toasts.",
   },
@@ -32,16 +44,15 @@ export default function Events() {
         Events
       </h2>
       <div className="grid gap-6 sm:grid-cols-3">
-        {events.map((e) => (
-          <div
-            key={e.title}
-            className="card-lift"
-            style={{
-              border: "2.5px solid var(--black)",
-              boxShadow: "5px 5px 0 var(--black)",
-              background: "var(--cream)",
-            }}
-          >
+        {events.map((e) => {
+          const card = (
+            <div
+              className="card-lift h-full"
+              style={{
+                border: "2.5px solid var(--black)",
+                background: "var(--cream)",
+              }}
+            >
             <div
               style={{
                 background: "var(--blue-purple)",
@@ -76,8 +87,23 @@ export default function Events() {
                 {e.desc}
               </p>
             </div>
-          </div>
-        ))}
+            </div>
+          );
+
+          if (e.href) {
+            return (
+              <Link
+                key={e.title}
+                href={e.href}
+                className="block"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                {card}
+              </Link>
+            );
+          }
+          return <div key={e.title}>{card}</div>;
+        })}
       </div>
     </section>
   );

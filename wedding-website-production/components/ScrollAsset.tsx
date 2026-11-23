@@ -25,7 +25,6 @@ export default function ScrollAsset() {
         style={{
           borderColor: "var(--black)",
           background: "var(--cream)",
-          boxShadow: "8px 8px 0 0 var(--black)",
         }}
       />
     </div>

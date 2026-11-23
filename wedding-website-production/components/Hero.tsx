@@ -7,8 +7,8 @@ export default function Hero() {
       <div className="sprocket-strip" />
 
       <div
-        className="relative flex flex-col items-center text-center px-6 py-16 w-full"
-        style={{ background: "#359c90" }}
+        className="relative flex flex-col items-center justify-center text-center px-6 py-16 w-full"
+        style={{ background: "#359c90", minHeight: "var(--hero-height)" }}
       >
         <p
           className="animate-fade-up uppercase mb-5 opacity-50"
@@ -113,7 +113,7 @@ export default function Hero() {
               marginBottom: "0.45rem",
             }}
           >
-            June 7, 2026
+            June 7, 2027
           </p>
           <p
             style={{
