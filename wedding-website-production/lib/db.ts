@@ -13,11 +13,21 @@ const db = new Database(dbPath);
 db.exec(`
   CREATE TABLE IF NOT EXISTS rsvps (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    email TEXT,
-    attending TEXT NOT NULL CHECK (attending IN ('yes', 'no')),
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
     welcome_party TEXT CHECK (welcome_party IN ('yes', 'no')),
+    wedding TEXT CHECK (wedding IN ('yes', 'no')),
     dietary TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS guests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    group_id INTEGER,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
   )
 `);

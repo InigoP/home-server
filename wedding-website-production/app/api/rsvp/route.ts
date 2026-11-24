@@ -1,42 +1,53 @@
 import { NextRequest, NextResponse, after } from "next/server";
 import db from "@/lib/db";
 
+type PartyMember = {
+  first_name: string;
+  last_name: string;
+  welcome_party: string;
+  wedding: string;
+  dietary: string;
+};
+
+const insertRsvp = db.prepare(`
+  INSERT INTO rsvps (first_name, last_name, welcome_party, wedding, dietary)
+  VALUES (?, ?, ?, ?, ?)
+`);
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, attending, welcome_party, dietary } = body;
+    const { first_name, last_name, welcome_party, wedding, dietary, party } = body;
 
-    if (!name || !attending) {
-      return NextResponse.json(
-        { error: "name and attending are required" },
-        { status: 400 }
-      );
+    if (!first_name?.trim() || !last_name?.trim()) {
+      return NextResponse.json({ error: "first_name and last_name are required" }, { status: 400 });
     }
 
-    if (attending !== "yes" && attending !== "no") {
-      return NextResponse.json(
-        { error: "attending must be 'yes' or 'no'" },
-        { status: 400 }
-      );
-    }
+    const insertMany = db.transaction((rows: PartyMember[]) => {
+      for (const row of rows) {
+        insertRsvp.run(
+          row.first_name,
+          row.last_name,
+          row.welcome_party || null,
+          row.wedding || null,
+          row.dietary || null,
+        );
+      }
+    });
 
-    if (welcome_party && welcome_party !== "yes" && welcome_party !== "no") {
-      return NextResponse.json(
-        { error: "welcome_party must be 'yes' or 'no'" },
-        { status: 400 }
-      );
-    }
+    const rows: PartyMember[] = [
+      { first_name: first_name.trim(), last_name: last_name.trim(), welcome_party, wedding, dietary },
+      ...(Array.isArray(party) ? party.map((m: PartyMember) => ({
+        first_name: m.first_name,
+        last_name: m.last_name,
+        welcome_party: m.welcome_party,
+        wedding: m.wedding,
+        dietary: m.dietary,
+      })) : []),
+    ];
 
-    const stmt = db.prepare(`
-      INSERT INTO rsvps (name, email, attending, welcome_party, dietary)
-      VALUES (?, ?, ?, ?, ?)
-    `);
+    insertMany(rows);
 
-    const result = stmt.run(name, email || null, attending, welcome_party || null, dietary || null);
-
-    // Sync to Google Sheet after the response is sent. `after` keeps the work
-    // alive; a bare fire-and-forget promise is dropped once the response
-    // completes, so RSVPs would never reach the sheet.
     const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
     if (webhookUrl) {
       after(async () => {
@@ -44,25 +55,16 @@ export async function POST(req: NextRequest) {
           const res = await fetch(webhookUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name,
-              email: email || "",
-              attending,
-              welcome_party: welcome_party || "",
-              dietary: dietary || "",
-              submitted_at: new Date().toISOString(),
-            }),
+            body: JSON.stringify({ rows, submitted_at: new Date().toISOString() }),
           });
-          if (!res.ok) {
-            throw new Error(`webhook responded with ${res.status}`);
-          }
+          if (!res.ok) throw new Error(`webhook responded with ${res.status}`);
         } catch (e) {
           console.error("Sheet sync failed:", e);
         }
       });
     }
 
-    return NextResponse.json({ success: true, id: result.lastInsertRowid });
+    return NextResponse.json({ success: true });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "failed to save rsvp" }, { status: 500 });
@@ -74,7 +76,6 @@ export async function GET(req: NextRequest) {
   if (token !== process.env.RSVP_ADMIN_TOKEN) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
-
   const rows = db.prepare("SELECT * FROM rsvps ORDER BY created_at DESC").all();
   return NextResponse.json(rows);
 }
