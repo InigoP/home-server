@@ -40,5 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# local data
-/data/
+# local data — keep the guest seed but ignore the databases
+/data/*.db
+/data/*.db-shm
+/data/*.db-wal
