@@ -20,6 +20,17 @@ export default function Gallery() {
   const photoRefs = useRef<(HTMLDivElement | null)[]>([]);
   const zCounter = useRef(photos.length);
   const [flipped, setFlipped] = useState<boolean[]>(() => photos.map(() => false));
+  // Shuffle which photo lands in each slot on mount (slot positions stay fixed)
+  const [displayOrder, setDisplayOrder] = useState<number[]>(() => photos.map((_, i) => i));
+
+  useEffect(() => {
+    const arr = photos.map((_, i) => i);
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    setDisplayOrder(arr);
+  }, []);
 
   useEffect(() => {
     const cleanups: (() => void)[] = [];
@@ -100,58 +111,75 @@ export default function Gallery() {
       el.style.zIndex = String(i + 1);
       el.style.visibility = "visible";
 
-      let previousTouch: Touch | undefined;
+      // Keep mobile touches from scrolling the page while dragging
+      el.style.touchAction = "none";
+
+      let dragging = false;
       let dragDistance = 0;
-      let interactive = false;
+      let startX = 0;
+      let startY = 0;
+      let startLeft = 0;
+      let startTop = 0;
+      let pendingLeft = 0;
+      let pendingTop = 0;
+      let rafId: number | null = null;
 
-      function update(e: MouseEvent | TouchEvent) {
-        let dx: number, dy: number;
-        if ("touches" in e) {
-          const t = e.touches[0];
-          dx = previousTouch ? t.clientX - previousTouch.clientX : 0;
-          dy = previousTouch ? t.clientY - previousTouch.clientY : 0;
-          previousTouch = t;
-        } else {
-          dx = (e as MouseEvent).movementX;
-          dy = (e as MouseEvent).movementY;
-        }
-        dragDistance += Math.abs(dx) + Math.abs(dy);
-        el!.style.top = `${parseInt(el!.style.top || "0") + dy}px`;
-        el!.style.left = `${parseInt(el!.style.left || "0") + dx}px`;
+      function flush() {
+        rafId = null;
+        el!.style.left = `${pendingLeft}px`;
+        el!.style.top = `${pendingTop}px`;
       }
 
-      function stop() {
-        previousTouch = undefined;
-        el!.style.cursor = "grab";
-        document.removeEventListener("mousemove", update);
-        document.removeEventListener("touchmove", update);
-        document.removeEventListener("mouseup", stop);
-        document.removeEventListener("touchend", stop);
-
-        if (interactive && dragDistance < CLICK_THRESHOLD) {
-          setFlipped((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
-        }
-        interactive = false;
-      }
-
-      function start() {
+      function onPointerDown(e: PointerEvent) {
+        dragging = true;
         dragDistance = 0;
-        interactive = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        startLeft = parseFloat(el!.style.left) || 0;
+        startTop = parseFloat(el!.style.top) || 0;
+        pendingLeft = startLeft;
+        pendingTop = startTop;
+        try { el!.setPointerCapture(e.pointerId); } catch {}
         el!.style.zIndex = String(++zCounter.current);
         el!.style.cursor = "grabbing";
-        document.addEventListener("mousemove", update);
-        document.addEventListener("touchmove", update);
-        document.addEventListener("mouseup", stop);
-        document.addEventListener("touchend", stop);
       }
 
-      el.addEventListener("mousedown", start);
-      el.addEventListener("touchstart", start);
+      function onPointerMove(e: PointerEvent) {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        dragDistance = Math.abs(dx) + Math.abs(dy);
+        pendingLeft = startLeft + dx;
+        pendingTop = startTop + dy;
+        if (rafId === null) rafId = requestAnimationFrame(flush);
+      }
+
+      function onPointerUp(e: PointerEvent) {
+        if (!dragging) return;
+        dragging = false;
+        if (rafId !== null) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+          flush();
+        }
+        try { el!.releasePointerCapture(e.pointerId); } catch {}
+        el!.style.cursor = "grab";
+        if (dragDistance < CLICK_THRESHOLD) {
+          setFlipped((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
+        }
+      }
+
+      el.addEventListener("pointerdown", onPointerDown);
+      el.addEventListener("pointermove", onPointerMove);
+      el.addEventListener("pointerup", onPointerUp);
+      el.addEventListener("pointercancel", onPointerUp);
 
       cleanups.push(() => {
-        el.removeEventListener("mousedown", start);
-        el.removeEventListener("touchstart", start);
-        stop();
+        el.removeEventListener("pointerdown", onPointerDown);
+        el.removeEventListener("pointermove", onPointerMove);
+        el.removeEventListener("pointerup", onPointerUp);
+        el.removeEventListener("pointercancel", onPointerUp);
+        if (rafId !== null) cancelAnimationFrame(rafId);
       });
     });
 
@@ -173,7 +201,9 @@ export default function Gallery() {
       }}
     >
       <div style={{ position: "absolute", top: "50%", left: "50%" }}>
-        {photos.map((photo, i) => (
+        {displayOrder.map((photoIdx, i) => {
+          const photo = photos[photoIdx];
+          return (
           <div
             key={i}
             ref={(el) => { photoRefs.current[i] = el; }}
@@ -282,7 +312,8 @@ export default function Gallery() {
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
