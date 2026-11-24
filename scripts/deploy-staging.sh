@@ -53,6 +53,7 @@ GUESTS_SQL="$STAGING_DIR/data/guests.sql"
 STAGING_DB="$STAGING_DIR/data-staging/wedding.db"
 if [ -f "$GUESTS_SQL" ]; then
   mkdir -p "$STAGING_DIR/data-staging"
+  sudo chmod 777 "$STAGING_DIR/data-staging"
   sqlite3 "$STAGING_DB" "
     CREATE TABLE IF NOT EXISTS guests (
       id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -91,7 +91,7 @@ export default function RsvpPage() {
     border: "2px solid var(--black)",
     background: "#fff",
     fontFamily: "var(--font-se)",
-    fontSize: "0.9rem",
+    fontSize: "1.01rem",
     color: "var(--black)",
     padding: "0.6rem 0.75rem",
     width: "100%",
@@ -99,24 +99,30 @@ export default function RsvpPage() {
 
   const labelStyle: React.CSSProperties = {
     fontFamily: "var(--font-se)",
-    fontSize: "0.72rem",
+    fontSize: "0.81rem",
     letterSpacing: "0.1em",
     textTransform: "uppercase",
     opacity: 0.6,
   };
 
   return (
-    <main className="min-h-screen flex flex-col" style={{ background: "var(--bg)" }}>
-      <div className="flex-1 flex items-start justify-center p-8 pt-16">
+    <main className="flex-1">
+      <section className="w-full">
+        <div className="sprocket-strip" />
+
+        <div
+          className="flex items-start justify-center p-8 pt-16"
+          style={{ background: "#359c90", minHeight: "var(--hero-height)" }}
+        >
         <div className="w-full max-w-md">
-          <div className="relative mx-2" style={{ transform: "rotate(-0.75deg)" }}>
+          <div className="relative mx-2" style={{ transform: "rotate(-0.75deg)", zIndex: 1000 }}>
             {/* Yellow tape */}
             <div
               className="absolute z-10"
               style={{
                 top: "-11px", left: "14%",
                 width: "52px", height: "17px",
-                background: "rgba(255, 228, 40, 0.75)",
+                background: "rgb(255, 228, 40)",
                 border: "1px solid rgba(0,0,0,0.1)",
                 transform: "rotate(-2.5deg)",
               }}
@@ -126,7 +132,7 @@ export default function RsvpPage() {
               style={{
                 top: "-11px", right: "14%",
                 width: "52px", height: "17px",
-                background: "rgba(255, 228, 40, 0.75)",
+                background: "rgb(255, 228, 40)",
                 border: "1px solid rgba(0,0,0,0.1)",
                 transform: "rotate(2.5deg)",
               }}
@@ -143,7 +149,7 @@ export default function RsvpPage() {
                   gap: "0.75rem",
                 }}
               >
-                <h1 className="font-display" style={{ fontSize: "1.3rem", color: "var(--black)" }}>
+                <h1 className="font-display" style={{ fontSize: "1.46rem", color: "var(--black)" }}>
                   RSVP
                 </h1>
                 <span style={{ ...labelStyle, opacity: 0.45 }}>reply card</span>
@@ -154,11 +160,11 @@ export default function RsvpPage() {
                   <div className="text-center py-4">
                     <strong
                       className="block font-display mb-3"
-                      style={{ fontSize: "clamp(1.75rem, 6vw, 2.5rem)", color: "var(--black)" }}
+                      style={{ fontSize: "clamp(1.97rem, 6.75vw, 2.81rem)", color: "var(--black)" }}
                     >
                       Hope to see you there!
                     </strong>
-                    <p className="mb-4" style={{ fontFamily: "var(--font-se)", fontSize: "0.95rem" }}>
+                    <p className="mb-4" style={{ fontFamily: "var(--font-se)", fontSize: "1.07rem" }}>
                       {[{ firstName: name.first, lastName: name.last }, ...party]
                         .map((m) => `${m.firstName} ${m.lastName}`)
                         .reduce<React.ReactNode[]>((acc, n, i, arr) => {
@@ -175,7 +181,7 @@ export default function RsvpPage() {
                         border: "2px solid var(--black)",
                         boxShadow: "2px 2px 0 var(--black)",
                         fontFamily: "var(--font-se)",
-                        fontSize: "0.78rem",
+                        fontSize: "0.875rem",
                         letterSpacing: "0.1em",
                         textTransform: "uppercase",
                       }}
@@ -185,7 +191,7 @@ export default function RsvpPage() {
                   </div>
                 ) : step === "lookup" ? (
                   <form onSubmit={handleLookup} className="flex flex-col gap-4">
-                    <p className="text-sm opacity-60" style={{ fontFamily: "var(--font-se)" }}>
+                    <p className="opacity-60" style={{ fontFamily: "var(--font-se)", fontSize: "0.98rem" }}>
                       Please RSVP by April 1, 2027.
                     </p>
                     <div className="flex gap-3">
@@ -211,8 +217,9 @@ export default function RsvpPage() {
                     <button
                       type="submit"
                       disabled={looking}
-                      className="btn-sketch py-3 font-display text-sm uppercase tracking-[0.04em] text-white"
+                      className="btn-sketch py-3 font-display uppercase tracking-[0.04em] text-white"
                       style={{
+                        fontSize: "1.09375rem",
                         background: looking ? "#ccc" : "var(--pink)",
                         cursor: looking ? "default" : "pointer",
                       }}
@@ -223,7 +230,7 @@ export default function RsvpPage() {
                 ) : (
                   <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div className="flex items-baseline justify-between">
-                      <span className="font-display" style={{ fontSize: "1.1rem" }}>
+                      <span className="font-display" style={{ fontSize: "1.24rem" }}>
                         {name.first} {name.last}
                       </span>
                       <button
@@ -231,7 +238,7 @@ export default function RsvpPage() {
                         onClick={() => setStep("lookup")}
                         style={{
                           fontFamily: "var(--font-se)",
-                          fontSize: "0.72rem",
+                          fontSize: "0.81rem",
                           letterSpacing: "0.08em",
                           textDecoration: "underline",
                           opacity: 0.5,
@@ -245,7 +252,7 @@ export default function RsvpPage() {
                     </div>
 
                     {hasExisting && (
-                      <p style={{ fontFamily: "var(--font-se)", fontSize: "0.78rem", opacity: 0.55 }}>
+                      <p style={{ fontFamily: "var(--font-se)", fontSize: "0.875rem", opacity: 0.55 }}>
                         Your RSVP is on file — update and resubmit to make changes.
                       </p>
                     )}
@@ -285,7 +292,7 @@ export default function RsvpPage() {
                       <div key={i}>
                         <div style={{ borderTop: "2px solid var(--black)", margin: "0.25rem 0" }} />
                         <div className="flex flex-col gap-4 mt-4">
-                          <span className="font-display" style={{ fontSize: "1rem" }}>
+                          <span className="font-display" style={{ fontSize: "1.125rem" }}>
                             {member.firstName} {member.lastName}
                           </span>
                           <label className="flex flex-col gap-1">
@@ -325,8 +332,9 @@ export default function RsvpPage() {
                     <button
                       type="submit"
                       disabled={status === "saving"}
-                      className="btn-sketch mt-1 py-3 font-display text-sm uppercase tracking-[0.04em] text-white"
+                      className="btn-sketch mt-1 py-3 font-display uppercase tracking-[0.04em] text-white"
                       style={{
+                        fontSize: "0.98rem",
                         background: status === "saving" ? "#ccc" : "var(--pink)",
                         cursor: status === "saving" ? "default" : "pointer",
                       }}
@@ -336,8 +344,8 @@ export default function RsvpPage() {
 
                     {status === "error" && (
                       <p
-                        className="text-sm text-center"
-                        style={{ fontFamily: "var(--font-se)", color: "var(--pink)" }}
+                        className="text-center"
+                        style={{ fontFamily: "var(--font-se)", fontSize: "0.98rem", color: "var(--pink)" }}
                       >
                         Something went wrong — please try again.
                       </p>
@@ -348,7 +356,10 @@ export default function RsvpPage() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
+
+        <div className="sprocket-strip" />
+      </section>
       <SceneNav prev={{ href: "/faq", label: "FAQ" }} />
     </main>
   );

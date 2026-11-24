@@ -3,16 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 
 const photos = [
-  {
-    src: "/grand_canyon.jpg",
-    // front: "Sonia & Inigo",
-    back: "We go camping :)",
-  },
-  {
-    src: "/proposal.jpeg",
-    // front: "June 7, 2026",
-    back: "Surprise proposal!!",
-  },
+  { src: "/grand_canyon.jpg", back: "We go camping :)" },
+  { src: "/proposal.jpeg", back: "Surprise proposal!!" },
+  { src: "/dan_vebby_wed.JPG", back: "Dan & Vebby's wedding" },
+  { src: "/engage_1.JPG", back: "MWAH!" },
+  { src: "/engage_2.JPG", back: "Engagement party!" },
+  { src: "/mtl_snow.JPG", back: "Montréal in the snow" },
+  { src: "/surf.JPG", back: "Catching waves" },
 ];
 
 const CARD_WIDTH = 220;
@@ -27,37 +24,81 @@ export default function Gallery() {
   useEffect(() => {
     const cleanups: (() => void)[] = [];
 
+    // ~25% overlap: cards still kiss but leave breathing room between them
+    const OVERLAP = 0.25;
+    const perSide = [0, 0];
+    const sideIndex: number[] = [];
+    const sideFor: number[] = [];
+    photos.forEach((_, i) => {
+      const s = i % 2 === 0 ? 0 : 1;
+      sideFor[i] = s;
+      sideIndex[i] = perSide[s]++;
+    });
+
+    // Distinct horizontal slot (0..1) for each card on its side, shuffled so the
+    // stack doesn't form a staircase.
+    const hSlots: number[][] = [[], []];
+    for (let s = 0; s < 2; s++) {
+      const n = perSide[s];
+      const slots = Array.from({ length: n }, (_, k) => (n > 1 ? k / (n - 1) : 0.5));
+      for (let k = n - 1; k > 0; k--) {
+        const j = Math.floor(Math.random() * (k + 1));
+        [slots[k], slots[j]] = [slots[j], slots[k]];
+      }
+      hSlots[s] = slots;
+    }
+
     photoRefs.current.forEach((el, i) => {
       if (!el) return;
 
-      const side = i === 0 ? -1 : 1;
+      const side = sideFor[i] === 0 ? -1 : 1;
+      const countOnSide = perSide[sideFor[i]];
+      const sIdx = sideIndex[i];
       const isMobile = window.innerWidth < 640;
 
-      let leftOffset: number;
-      let topOffset: number;
+      // Card scale affects the on-screen footprint used for overlap math
+      const mobileScale = isMobile ? 0.45 : 1;
+      const effCardH = CARD_HEIGHT * mobileScale;
 
-      if (isMobile) {
-        // Mobile: diagonal stack (upper-left, lower-right) with tight side offset
-        const sideBase = window.innerWidth * 0.14;
-        const sideJitter = Math.random() * 25;
-        const verticalBase = side * window.innerHeight * 0.28;
-        const verticalJitter = (Math.random() * 2 - 1) * window.innerHeight * 0.06;
-        leftOffset = side * (sideBase + sideJitter);
-        topOffset = verticalBase + verticalJitter;
-      } else {
-        // Desktop: side-by-side, outside the center hero region
-        const sideBase = Math.max(window.innerWidth * 0.3, 340);
-        const sideJitter = Math.random() * 90;
-        const verticalJitter = (Math.random() * 2 - 1) * Math.min(window.innerHeight * 0.22, 200);
-        leftOffset = side * (sideBase + sideJitter);
-        topOffset = verticalJitter;
-      }
+      const step = effCardH * (1 - OVERLAP);
+      // Center the stack vertically on the hero: index 0 sits at top, last at bottom
+      const stackTop = -((countOnSide - 1) * step) / 2;
+      const verticalJitter = (Math.random() * 2 - 1) * (isMobile ? 14 : 28);
+      const topOffset = stackTop + sIdx * step + verticalJitter;
+
+      // Estimate half-width of the hero "Sonia & Inigo" name block from its
+      // clamp(3.9rem, 13vw, 6.5rem) font rule (20px root). Cards sit just outside
+      // this plus their own half-width + a few pixels of clearance.
+      const nameFontPx = Math.min(Math.max(0.13 * window.innerWidth, 78), 130);
+      const nameHalfWidth = nameFontPx * 2.4 + 30;
+      const effCardHalfW = (CARD_WIDTH / 2) * mobileScale;
+      const nameClearance = nameHalfWidth + effCardHalfW + 8;
+
+      // Cap how far from center we're allowed to place a card so it stays on-screen
+      const maxInner = window.innerWidth / 2 - effCardHalfW - 6;
+
+      // Horizontal band per side (inner edge → outer edge from screen center)
+      const innerEdgeRaw = Math.max(
+        isMobile ? window.innerWidth * 0.1 : Math.max(window.innerWidth * 0.2, 280),
+        nameClearance
+      );
+      const innerEdge = Math.min(innerEdgeRaw, maxInner);
+      const outerEdgeRaw = isMobile
+        ? window.innerWidth * 0.42
+        : Math.min(window.innerWidth * 0.55, 760);
+      const outerEdge = Math.min(Math.max(outerEdgeRaw, innerEdge + 20), maxInner);
+      const hT = hSlots[sideFor[i]][sIdx];
+      const sideDist = innerEdge + hT * (outerEdge - innerEdge);
+      // Outward-only jitter so cards can't drift back into the name block
+      const jitterMax = Math.min(isMobile ? 16 : 35, Math.max(0, maxInner - sideDist));
+      const sideJitter = Math.random() * jitterMax;
+      const leftOffset = side * (sideDist + sideJitter);
 
       el.style.left = `${leftOffset}px`;
       el.style.top = `${topOffset}px`;
-      const mobileScale = isMobile ? 0.25 : 1;
       el.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 20 - 10}deg) scale(${mobileScale})`;
       el.style.zIndex = String(i + 1);
+      el.style.visibility = "visible";
 
       let previousTouch: Touch | undefined;
       let dragDistance = 0;
@@ -128,7 +169,7 @@ export default function Gallery() {
         height: "100vh",
         overflow: "visible",
         pointerEvents: "none",
-        zIndex: 40,
+        zIndex: 3000,
       }}
     >
       <div style={{ position: "absolute", top: "50%", left: "50%" }}>
@@ -143,6 +184,7 @@ export default function Gallery() {
               width: `${CARD_WIDTH}px`,
               height: `${CARD_HEIGHT}px`,
               transform: "translate(-50%, -50%)",
+              visibility: "hidden",
               userSelect: "none",
               cursor: "grab",
               pointerEvents: "auto",
@@ -176,6 +218,7 @@ export default function Gallery() {
                   src={photo.src}
                   alt=""
                   draggable={false}
+                  decoding="async"
                   style={{
                     display: "block",
                     width: `${CARD_WIDTH - 16}px`,

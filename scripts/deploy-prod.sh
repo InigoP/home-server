@@ -39,9 +39,11 @@ GUESTS_SQL="$REPO_ROOT/wedding-website-production/data/guests.sql"
 PROD_DB="$REPO_ROOT/wedding-website-production/data/wedding.db"
 STAGING_DB="$REPO_ROOT/wedding-website-staging/data-staging/wedding.db"
 if [ -f "$GUESTS_SQL" ]; then
+  sudo chmod 777 "$(dirname "$PROD_DB")"
   sqlite3 "$PROD_DB" < "$GUESTS_SQL"
   echo "Guest list seeded into production from guests.sql."
   if [ -f "$STAGING_DB" ]; then
+    sudo chmod 777 "$(dirname "$STAGING_DB")"
     sqlite3 "$STAGING_DB" < "$GUESTS_SQL"
     echo "Guest list seeded into staging from guests.sql."
   fi
