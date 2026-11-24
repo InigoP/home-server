@@ -33,3 +33,16 @@ git push origin main
 
 docker compose up -d --build wedding-website
 echo "Production deployed to https://soniainigo.pingu93.com"
+
+# Seed guest list from guests.sql into both production and staging databases.
+GUESTS_SQL="$REPO_ROOT/wedding-website-production/data/guests.sql"
+PROD_DB="$REPO_ROOT/wedding-website-production/data/wedding.db"
+STAGING_DB="$REPO_ROOT/wedding-website-staging/data-staging/wedding.db"
+if [ -f "$GUESTS_SQL" ]; then
+  sqlite3 "$PROD_DB" < "$GUESTS_SQL"
+  echo "Guest list seeded into production from guests.sql."
+  if [ -f "$STAGING_DB" ]; then
+    sqlite3 "$STAGING_DB" < "$GUESTS_SQL"
+    echo "Guest list seeded into staging from guests.sql."
+  fi
+fi

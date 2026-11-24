@@ -48,6 +48,24 @@ trap 'rm -rf "$tmp"' EXIT
 git archive origin/develop:wedding-website-production | tar -x -C "$tmp"
 rsync -a --delete --exclude 'data-staging/' "$tmp/" "$STAGING_DIR/"
 
+# Seed guest list from committed guests.sql into the staging database.
+GUESTS_SQL="$STAGING_DIR/data/guests.sql"
+STAGING_DB="$STAGING_DIR/data-staging/wedding.db"
+if [ -f "$GUESTS_SQL" ]; then
+  mkdir -p "$STAGING_DIR/data-staging"
+  sqlite3 "$STAGING_DB" "
+    CREATE TABLE IF NOT EXISTS guests (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      first_name TEXT NOT NULL,
+      last_name TEXT NOT NULL,
+      group_id INTEGER,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+  "
+  sqlite3 "$STAGING_DB" < "$GUESTS_SQL"
+  echo "Guest list seeded into staging from guests.sql."
+fi
+
 # staging-website was historically started from wedding-website-staging/, which
 # makes it a container in a different compose project than this one. Both
 # projects declare `container_name: staging-website`, so clear out any existing
