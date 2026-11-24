@@ -10,13 +10,10 @@ export default function RsvpPage() {
   const [step, setStep] = useState<"lookup" | "form">("lookup");
   const [looking, setLooking] = useState(false);
   const [party, setParty] = useState<PartyMember[]>([]);
+  const [hasExisting, setHasExisting] = useState(false);
 
   const [name, setName] = useState({ first: "", last: "" });
-  const [form, setForm] = useState({
-    wedding: "yes",
-    welcome_party: "yes",
-    dietary: "",
-  });
+  const [form, setForm] = useState({ wedding: "yes", welcome_party: "yes", dietary: "" });
   const [partyForms, setPartyForms] = useState<PartyForm[]>([]);
   const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
 
@@ -30,7 +27,24 @@ export default function RsvpPage() {
       const data = await res.json();
       const members: PartyMember[] = data.party ?? [];
       setParty(members);
-      setPartyForms(members.map(() => ({ wedding: "yes", welcome_party: "yes", dietary: "" })));
+      setHasExisting(!!data.existingRsvp);
+
+      if (data.existingRsvp) {
+        setForm({
+          wedding: data.existingRsvp.wedding ?? "yes",
+          welcome_party: data.existingRsvp.welcome_party ?? "yes",
+          dietary: data.existingRsvp.dietary ?? "",
+        });
+      }
+
+      setPartyForms(members.map((_, i) => {
+        const existing = data.partyExistingRsvps?.[i];
+        return {
+          wedding: existing?.wedding ?? "yes",
+          welcome_party: existing?.welcome_party ?? "yes",
+          dietary: existing?.dietary ?? "",
+        };
+      }));
     } catch {
       setParty([]);
       setPartyForms([]);
@@ -73,7 +87,7 @@ export default function RsvpPage() {
     }
   }
 
-  const fieldStyle = {
+  const fieldStyle: React.CSSProperties = {
     border: "2px solid var(--black)",
     background: "#fff",
     fontFamily: "var(--font-se)",
@@ -83,11 +97,11 @@ export default function RsvpPage() {
     width: "100%",
   };
 
-  const labelStyle = {
+  const labelStyle: React.CSSProperties = {
     fontFamily: "var(--font-se)",
     fontSize: "0.72rem",
     letterSpacing: "0.1em",
-    textTransform: "uppercase" as const,
+    textTransform: "uppercase",
     opacity: 0.6,
   };
 
@@ -144,10 +158,7 @@ export default function RsvpPage() {
                     >
                       Hope to see you there!
                     </strong>
-                    <p
-                      className="mb-4"
-                      style={{ fontFamily: "var(--font-se)", fontSize: "0.95rem" }}
-                    >
+                    <p className="mb-4" style={{ fontFamily: "var(--font-se)", fontSize: "0.95rem" }}>
                       {[{ firstName: name.first, lastName: name.last }, ...party]
                         .map((m) => `${m.firstName} ${m.lastName}`)
                         .reduce<React.ReactNode[]>((acc, n, i, arr) => {
@@ -211,7 +222,6 @@ export default function RsvpPage() {
                   </form>
                 ) : (
                   <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    {/* Name + edit */}
                     <div className="flex items-baseline justify-between">
                       <span className="font-display" style={{ fontSize: "1.1rem" }}>
                         {name.first} {name.last}
@@ -233,6 +243,12 @@ export default function RsvpPage() {
                         edit
                       </button>
                     </div>
+
+                    {hasExisting && (
+                      <p style={{ fontFamily: "var(--font-se)", fontSize: "0.78rem", opacity: 0.55 }}>
+                        Your RSVP is on file — update and resubmit to make changes.
+                      </p>
+                    )}
 
                     <label className="flex flex-col gap-1">
                       <span style={labelStyle}>Attending welcome party?</span>
@@ -265,7 +281,6 @@ export default function RsvpPage() {
                       />
                     </label>
 
-                    {/* Party members */}
                     {party.map((member, i) => (
                       <div key={i}>
                         <div style={{ borderTop: "2px solid var(--black)", margin: "0.25rem 0" }} />
@@ -316,7 +331,7 @@ export default function RsvpPage() {
                         cursor: status === "saving" ? "default" : "pointer",
                       }}
                     >
-                      {status === "saving" ? "Sending..." : "Submit RSVP →"}
+                      {status === "saving" ? "Sending..." : hasExisting ? "Update RSVP →" : "Submit RSVP →"}
                     </button>
 
                     {status === "error" && (

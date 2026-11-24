@@ -9,6 +9,10 @@ type PartyMember = {
   dietary: string;
 };
 
+const deleteRsvp = db.prepare(`
+  DELETE FROM rsvps WHERE LOWER(first_name) = LOWER(?) AND LOWER(last_name) = LOWER(?)
+`);
+
 const insertRsvp = db.prepare(`
   INSERT INTO rsvps (first_name, last_name, welcome_party, wedding, dietary)
   VALUES (?, ?, ?, ?, ?)
@@ -25,6 +29,7 @@ export async function POST(req: NextRequest) {
 
     const insertMany = db.transaction((rows: PartyMember[]) => {
       for (const row of rows) {
+        deleteRsvp.run(row.first_name, row.last_name);
         insertRsvp.run(
           row.first_name,
           row.last_name,
