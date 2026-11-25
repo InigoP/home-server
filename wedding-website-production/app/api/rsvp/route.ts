@@ -7,6 +7,7 @@ type PartyMember = {
   welcome_party: string;
   wedding: string;
   dietary: string;
+  song_request: string;
 };
 
 const deleteRsvp = db.prepare(`
@@ -14,14 +15,14 @@ const deleteRsvp = db.prepare(`
 `);
 
 const insertRsvp = db.prepare(`
-  INSERT INTO rsvps (first_name, last_name, welcome_party, wedding, dietary)
-  VALUES (?, ?, ?, ?, ?)
+  INSERT INTO rsvps (first_name, last_name, welcome_party, wedding, dietary, song_request)
+  VALUES (?, ?, ?, ?, ?, ?)
 `);
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { first_name, last_name, welcome_party, wedding, dietary, party } = body;
+    const { first_name, last_name, welcome_party, wedding, dietary, song_request, party } = body;
 
     if (!first_name?.trim() || !last_name?.trim()) {
       return NextResponse.json({ error: "first_name and last_name are required" }, { status: 400 });
@@ -36,18 +37,20 @@ export async function POST(req: NextRequest) {
           row.welcome_party || null,
           row.wedding || null,
           row.dietary || null,
+          row.song_request || null,
         );
       }
     });
 
     const rows: PartyMember[] = [
-      { first_name: first_name.trim(), last_name: last_name.trim(), welcome_party, wedding, dietary },
+      { first_name: first_name.trim(), last_name: last_name.trim(), welcome_party, wedding, dietary, song_request },
       ...(Array.isArray(party) ? party.map((m: PartyMember) => ({
         first_name: m.first_name,
         last_name: m.last_name,
         welcome_party: m.welcome_party,
         wedding: m.wedding,
         dietary: m.dietary,
+        song_request: m.song_request,
       })) : []),
     ];
 

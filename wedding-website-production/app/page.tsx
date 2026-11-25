@@ -64,7 +64,7 @@ export default async function Home() {
     <>
       <main className="flex-1">
         <Hero />
-        <SceneNext href="/schedule" label="Schedule" />
+        <SceneNext href="/events" label="Events" />
       </main>
       <Gallery photos={photos} />
     </>

@@ -220,8 +220,8 @@ export default function WelcomeParty() {
       <div className="sprocket-strip" />
 
       <SceneNav
-        prev={{ href: "/schedule", label: "Schedule" }}
-        next={{ href: "/schedule/ceremony", label: "Ceremony" }}
+        prev={{ href: "/events", label: "Events" }}
+        next={{ href: "/events/ceremony", label: "Ceremony" }}
       />
     </main>
   );

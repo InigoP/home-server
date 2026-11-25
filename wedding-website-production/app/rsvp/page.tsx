@@ -4,7 +4,7 @@ import { useState } from "react";
 import SceneNav from "@/components/SceneNav";
 
 type PartyMember = { firstName: string; lastName: string };
-type PartyForm = { wedding: string; welcome_party: string; dietary: string };
+type PartyForm = { wedding: string; welcome_party: string; dietary: string; song_request: string };
 
 export default function RsvpPage() {
   const [step, setStep] = useState<"lookup" | "form">("lookup");
@@ -13,7 +13,7 @@ export default function RsvpPage() {
   const [hasExisting, setHasExisting] = useState(false);
 
   const [name, setName] = useState({ first: "", last: "" });
-  const [form, setForm] = useState({ wedding: "yes", welcome_party: "yes", dietary: "" });
+  const [form, setForm] = useState({ wedding: "yes", welcome_party: "yes", dietary: "", song_request: "" });
   const [partyForms, setPartyForms] = useState<PartyForm[]>([]);
   const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
 
@@ -34,6 +34,7 @@ export default function RsvpPage() {
           wedding: data.existingRsvp.wedding ?? "yes",
           welcome_party: data.existingRsvp.welcome_party ?? "yes",
           dietary: data.existingRsvp.dietary ?? "",
+          song_request: data.existingRsvp.song_request ?? "",
         });
       }
 
@@ -43,6 +44,7 @@ export default function RsvpPage() {
           wedding: existing?.wedding ?? "yes",
           welcome_party: existing?.welcome_party ?? "yes",
           dietary: existing?.dietary ?? "",
+          song_request: existing?.song_request ?? "",
         };
       }));
     } catch {
@@ -71,12 +73,14 @@ export default function RsvpPage() {
           wedding: form.wedding,
           welcome_party: form.welcome_party,
           dietary: form.dietary,
+          song_request: form.song_request,
           party: party.map((member, i) => ({
             first_name: member.firstName,
             last_name: member.lastName,
             wedding: partyForms[i].wedding,
             welcome_party: partyForms[i].welcome_party,
             dietary: partyForms[i].dietary,
+            song_request: partyForms[i].song_request,
           })),
         }),
       });
@@ -287,6 +291,15 @@ export default function RsvpPage() {
                         onChange={(e) => setForm({ ...form, dietary: e.target.value })}
                       />
                     </label>
+                    <label className="flex flex-col gap-1">
+                      <span style={labelStyle}>What song do you want to hear?</span>
+                      <input
+                        style={fieldStyle}
+                        placeholder="Artist — Song title"
+                        value={form.song_request}
+                        onChange={(e) => setForm({ ...form, song_request: e.target.value })}
+                      />
+                    </label>
 
                     {party.map((member, i) => (
                       <div key={i}>
@@ -323,6 +336,15 @@ export default function RsvpPage() {
                               style={fieldStyle}
                               value={partyForms[i].dietary}
                               onChange={(e) => updatePartyForm(i, "dietary", e.target.value)}
+                            />
+                          </label>
+                          <label className="flex flex-col gap-1">
+                            <span style={labelStyle}>What song do you want to hear?</span>
+                            <input
+                              style={fieldStyle}
+                              placeholder="Artist — Song title"
+                              value={partyForms[i].song_request}
+                              onChange={(e) => updatePartyForm(i, "song_request", e.target.value)}
                             />
                           </label>
                         </div>

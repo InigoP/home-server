@@ -59,7 +59,7 @@ export default function Venue() {
       </section>
 
       <SceneNav
-        prev={{ href: "/schedule", label: "Schedule" }}
+        prev={{ href: "/events", label: "Events" }}
         next={{ href: "/registry", label: "Registry" }}
       />
     </main>

@@ -39,8 +39,11 @@ export default function Gallery({ photos }: Props) {
     const perSide = [0, 0];
     const sideIndex: number[] = [];
     const sideFor: number[] = [];
+    // Flip which side gets the first (and therefore extra) card each mount,
+    // so sometimes the left stack is taller and sometimes the right.
+    const startSide = Math.random() < 0.5 ? 0 : 1;
     photos.forEach((_, i) => {
-      const s = i % 2 === 0 ? 0 : 1;
+      const s = i % 2 === 0 ? startSide : 1 - startSide;
       sideFor[i] = s;
       sideIndex[i] = perSide[s]++;
     });
@@ -73,21 +76,23 @@ export default function Gallery({ photos }: Props) {
       const verticalJitter = (Math.random() * 2 - 1) * (isMobile ? 18 : 28);
       let topOffset: number;
       if (isMobile) {
-        // Mobile: distribute cards from just below the nav to just past the
-        // viewport (into the SceneNext area), scaling with actual phone height.
+        // Mobile: distribute cards from just below the nav to well past the
+        // viewport fold, scaling with actual phone height.
         const effCardHalfH = (CARD_HEIGHT / 2) * mobileScale;
         const navClearance = 70;
         const minYCenter = navClearance + effCardHalfH;
-        const maxYCenter = window.innerHeight + 220 - effCardHalfH;
+        const maxYCenter = window.innerHeight + 450 - effCardHalfH;
         const yCenter = countOnSide > 1
           ? minYCenter + (sIdx / (countOnSide - 1)) * (maxYCenter - minYCenter)
           : (minYCenter + maxYCenter) / 2;
         topOffset = yCenter - window.innerHeight * 0.5 + verticalJitter;
       } else {
-        // Desktop: stack centered on hero with the overlap value from OVERLAP
+        // Desktop: stack centered on hero with the overlap value from OVERLAP,
+        // then nudge downward so the bottom cards spill past the fold.
         const step = effCardH * (1 - OVERLAP);
         const stackTop = -((countOnSide - 1) * step) / 2;
-        topOffset = stackTop + sIdx * step + verticalJitter;
+        const desktopDownShift = window.innerHeight * 0.07;
+        topOffset = stackTop + sIdx * step + verticalJitter + desktopDownShift;
       }
 
       // Final guard: no card's top edge may cross into the fixed nav bar,

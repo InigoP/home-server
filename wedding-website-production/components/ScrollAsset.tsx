@@ -13,7 +13,7 @@ export default function ScrollAsset() {
 
   return (
     <div
-      className="pointer-events-none fixed bottom-10 left-1/7 z-10 transition-transform duration-100"
+      className="pointer-events-none fixed bottom-[15%] left-1/10 z-10 transition-transform duration-100"
       style={{ transform: `translateY(-${offset}px)` }}
       aria-hidden
     >
@@ -21,7 +21,7 @@ export default function ScrollAsset() {
         src="/photostrip.jpg"
         alt=""
         draggable={false}
-        className="h-auto max-h-[55vh] w-auto -rotate-3 select-none border-4 p-2"
+        className="h-auto max-h-[35vh] w-auto -rotate-3 select-none border-4 p-2 sm:max-h-[55vh]"
         style={{
           borderColor: "var(--black)",
           background: "var(--cream)",

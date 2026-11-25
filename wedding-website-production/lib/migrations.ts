@@ -95,6 +95,13 @@ const migrations: Migration[] = [
       db.exec(`ALTER TABLE rsvps_new RENAME TO rsvps`);
     },
   },
+  {
+    version: 3,
+    description: "add song_request column to rsvps",
+    up: (db) => {
+      db.exec(`ALTER TABLE rsvps ADD COLUMN song_request TEXT`);
+    },
+  },
 ];
 
 export function runMigrations(db: Database.Database) {
