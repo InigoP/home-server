@@ -45,12 +45,34 @@ export default function ViewTransitionLinks() {
       const back = link.dataset.direction === "back";
       if (back) document.documentElement.dataset.transition = "back";
 
-      const transition = document.startViewTransition(() => {
-        router.push(href);
+      // Hot path (prefetch cache hit): router.push resolves in ~5ms — proceed
+      //   immediately, don't pay the extra paint-frame cost.
+      // Cold path (cache expired after idle): router.push is slow — wait for
+      //   navigation to commit AND one paint frame so the transition animates
+      //   against the real new DOM instead of flashing stale content.
+      // Both capped at 1s so we never trip Chrome's 4s view-transition timeout.
+      const transition = document.startViewTransition(async () => {
+        const navigated = Promise.resolve(router.push(href));
+        const result = await Promise.race([
+          navigated.then(() => "fast" as const),
+          new Promise<"slow">((r) => setTimeout(() => r("slow"), 15)),
+        ]);
+        if (result === "slow") {
+          await Promise.race([
+            navigated.then(
+              () => new Promise<void>((r) => requestAnimationFrame(() => r()))
+            ),
+            new Promise<void>((r) => setTimeout(r, 1000)),
+          ]);
+        }
       });
-      transition.finished.finally(() => {
-        delete document.documentElement.dataset.transition;
-      });
+      // `finished` rejects if the transition is skipped/aborted; swallow it so
+      // it doesn't bubble to window.onunhandledrejection.
+      transition.finished
+        .catch(() => {})
+        .finally(() => {
+          delete document.documentElement.dataset.transition;
+        });
     }
 
     document.addEventListener("click", handleClick, { capture: true });

@@ -2,24 +2,23 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const photos = [
-  { src: "/grand_canyon.jpg", back: "We go camping :)" },
-  { src: "/proposal.jpeg", back: "Surprise proposal!!" },
-  { src: "/dan_vebby_wed.JPG", back: "Dan & Vebby's wedding" },
-  { src: "/engage_1.JPG", back: "MWAH!" },
-  { src: "/engage_2.JPG", back: "Engagement party!" },
-  { src: "/mtl_snow.JPG", back: "Montréal in the snow" },
-  { src: "/surf.JPG", back: "Catching waves" },
-];
+type Photo = { src: string; back: string };
+
+interface Props {
+  photos: Photo[];
+}
 
 const CARD_WIDTH = 220;
 const CARD_HEIGHT = 244; // 220 image + 24 caption strip
 const CLICK_THRESHOLD = 6; // px of movement below which a release is treated as a click
 
-export default function Gallery() {
+export default function Gallery({ photos }: Props) {
   const photoRefs = useRef<(HTMLDivElement | null)[]>([]);
   const zCounter = useRef(photos.length);
   const [flipped, setFlipped] = useState<boolean[]>(() => photos.map(() => false));
+  // Visibility driven by state so React's reconciliation never clobbers a
+  // direct DOM mutation after the position effect runs (dev-mode bug).
+  const [visible, setVisible] = useState<boolean[]>(() => photos.map(() => false));
   // Shuffle which photo lands in each slot on mount (slot positions stay fixed)
   const [displayOrder, setDisplayOrder] = useState<number[]>(() => photos.map((_, i) => i));
 
@@ -71,11 +70,32 @@ export default function Gallery() {
       const mobileScale = isMobile ? 0.45 : 1;
       const effCardH = CARD_HEIGHT * mobileScale;
 
-      const step = effCardH * (1 - OVERLAP);
-      // Center the stack vertically on the hero: index 0 sits at top, last at bottom
-      const stackTop = -((countOnSide - 1) * step) / 2;
-      const verticalJitter = (Math.random() * 2 - 1) * (isMobile ? 14 : 28);
-      const topOffset = stackTop + sIdx * step + verticalJitter;
+      const verticalJitter = (Math.random() * 2 - 1) * (isMobile ? 18 : 28);
+      let topOffset: number;
+      if (isMobile) {
+        // Mobile: distribute cards from just below the nav to just past the
+        // viewport (into the SceneNext area), scaling with actual phone height.
+        const effCardHalfH = (CARD_HEIGHT / 2) * mobileScale;
+        const navClearance = 70;
+        const minYCenter = navClearance + effCardHalfH;
+        const maxYCenter = window.innerHeight + 220 - effCardHalfH;
+        const yCenter = countOnSide > 1
+          ? minYCenter + (sIdx / (countOnSide - 1)) * (maxYCenter - minYCenter)
+          : (minYCenter + maxYCenter) / 2;
+        topOffset = yCenter - window.innerHeight * 0.5 + verticalJitter;
+      } else {
+        // Desktop: stack centered on hero with the overlap value from OVERLAP
+        const step = effCardH * (1 - OVERLAP);
+        const stackTop = -((countOnSide - 1) * step) / 2;
+        topOffset = stackTop + sIdx * step + verticalJitter;
+      }
+
+      // Final guard: no card's top edge may cross into the fixed nav bar,
+      // regardless of jitter or scatter math.
+      const navHeight = 66;
+      const effCardHalfH = (CARD_HEIGHT / 2) * mobileScale;
+      const minTopOffset = navHeight + effCardHalfH - window.innerHeight * 0.5;
+      if (topOffset < minTopOffset) topOffset = minTopOffset;
 
       // Estimate half-width of the hero "Sonia & Inigo" name block from its
       // clamp(3.9rem, 13vw, 6.5rem) font rule (20px root). Cards sit just outside
@@ -109,7 +129,6 @@ export default function Gallery() {
       el.style.top = `${topOffset}px`;
       el.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 20 - 10}deg) scale(${mobileScale})`;
       el.style.zIndex = String(i + 1);
-      el.style.visibility = "visible";
 
       // Keep mobile touches from scrolling the page while dragging
       el.style.touchAction = "none";
@@ -151,6 +170,15 @@ export default function Gallery() {
         dragDistance = Math.abs(dx) + Math.abs(dy);
         pendingLeft = startLeft + dx;
         pendingTop = startTop + dy;
+
+        // Clamp top so the card's top edge can't cross into the fixed nav bar.
+        // Card center in viewport Y = 50vh + pendingTop (inner div sits at 50vh).
+        const navHeight = 66;
+        const scaleNow = window.innerWidth < 640 ? 0.45 : 1;
+        const cardHalfH = (CARD_HEIGHT / 2) * scaleNow;
+        const minTop = navHeight + cardHalfH - window.innerHeight * 0.5;
+        if (pendingTop < minTop) pendingTop = minTop;
+
         if (rafId === null) rafId = requestAnimationFrame(flush);
       }
 
@@ -183,6 +211,10 @@ export default function Gallery() {
       });
     });
 
+    // Now that every card is positioned, flip the visibility flags through state
+    // so the JSX reflects the real DOM state and React won't overwrite it later.
+    setVisible(photos.map(() => true));
+
     return () => cleanups.forEach((fn) => fn());
   }, []);
 
@@ -197,7 +229,7 @@ export default function Gallery() {
         height: "100vh",
         overflow: "visible",
         pointerEvents: "none",
-        zIndex: 3000,
+        zIndex: 40,
       }}
     >
       <div style={{ position: "absolute", top: "50%", left: "50%" }}>
@@ -214,7 +246,7 @@ export default function Gallery() {
               width: `${CARD_WIDTH}px`,
               height: `${CARD_HEIGHT}px`,
               transform: "translate(-50%, -50%)",
-              visibility: "hidden",
+              visibility: visible[i] ? "visible" : "hidden",
               userSelect: "none",
               cursor: "grab",
               pointerEvents: "auto",
@@ -255,7 +287,7 @@ export default function Gallery() {
                     height: `${CARD_WIDTH - 16}px`,
                     objectFit: "cover",
                     pointerEvents: "none",
-                    filter: "sepia(0.4) saturate(1.3) contrast(0.9) brightness(1.05) hue-rotate(-8deg)",
+                    filter: "saturate(1.07) contrast(1.05)",
                   }}
                 />
                 <div

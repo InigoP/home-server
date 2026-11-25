@@ -44,3 +44,8 @@ next-env.d.ts
 /data/*.db
 /data/*.db-shm
 /data/*.db-wal
+
+# HEIC source photos — browsers can't render them, we commit the
+# converted JPEGs next to them instead.
+*.heic
+*.HEIC
