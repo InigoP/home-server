@@ -17,6 +17,8 @@ export default function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  if (pathname === "/coming-soon") return null;
+
   return (
     <nav
       className={open ? "nav-open" : ""}

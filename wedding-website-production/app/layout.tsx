@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { Bebas_Neue, Courier_Prime } from "next/font/google";
 import "./globals.css";
-import ComingSoon from "@/components/ComingSoon";
 import Nav from "@/components/Nav";
 import ViewTransitionLinks from "@/components/ViewTransitionLinks";
 
@@ -24,13 +22,7 @@ export const metadata: Metadata = {
   description: "Wedding website for Sonia & Inigo at Pavillon de la Jamaïque, Montréal.",
 };
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
-  // Reading a request header keeps this layout dynamic so COMING_SOON is read
-  // at request time instead of being baked into the build.
-  const host = (await headers()).get("host") ?? "";
-  const comingSoon =
-    process.env.COMING_SOON === "true" && !host.startsWith("staging.");
-
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
@@ -38,14 +30,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <ViewTransitionLinks />
-        {comingSoon ? (
-          <ComingSoon />
-        ) : (
-          <>
-            <Nav />
-            {children}
-          </>
-        )}
+        <Nav />
+        {children}
       </body>
     </html>
   );
