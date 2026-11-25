@@ -287,7 +287,11 @@ export default function Gallery({ photos }: Props) {
                     height: `${CARD_WIDTH - 16}px`,
                     objectFit: "cover",
                     pointerEvents: "none",
-                    filter: "saturate(1.07) contrast(1.05)",
+                    // Warm a few cool-leaning photos with a touch of sepia;
+                    // the rest get the standard saturation/contrast lift.
+                    filter: /(will_jen|kayak|hiking)/i.test(photo.src)
+                      ? "sepia(0.1) saturate(1.15) contrast(1.05) hue-rotate(-15deg)"
+                      : "saturate(1.03) contrast(1.05)",
                   }}
                 />
                 <div

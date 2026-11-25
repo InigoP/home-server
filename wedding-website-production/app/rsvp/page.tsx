@@ -247,13 +247,13 @@ export default function RsvpPage() {
                           cursor: "pointer",
                         }}
                       >
-                        edit
+                        back
                       </button>
                     </div>
 
                     {hasExisting && (
                       <p style={{ fontFamily: "var(--font-se)", fontSize: "0.875rem", opacity: 0.55 }}>
-                        Your RSVP is on file — update and resubmit to make changes.
+                        Update and resubmit to make changes!
                       </p>
                     )}
 

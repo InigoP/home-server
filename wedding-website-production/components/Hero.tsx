@@ -140,16 +140,16 @@ export default function Hero() {
         {/* RSVP button — inside teal panel, above bottom sprocket */}
         <div
           className="animate-fade-up mt-20"
-          style={{ animationDelay: "0.24s" }}
+          style={{ animationDelay: "0.24s", position: "relative", zIndex: 1000 }}
         >
           <FlipLink
             href="/rsvp"
-            className="inline-block font-display uppercase tracking-[0.08em] px-10 py-3 text-white transition-transform hover:-translate-y-0.5"
+            className="inline-block font-display uppercase tracking-[0.12em] px-14 py-5 text-white transition-transform hover:-translate-y-0.5"
             style={{
-              fontSize: "1.14rem",
-              background: "var(--pink)",
-              border: "2.5px solid var(--black)",
-              boxShadow: "4px 4px 0 var(--black)",
+              fontSize: "1.65rem",
+              background: "var(--orange)",
+              border: "3px solid var(--black)",
+              boxShadow: "6px 6px 0 var(--black)",
             }}
           >
             RSVP

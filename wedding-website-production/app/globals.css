@@ -8,6 +8,7 @@ html {
   --bg:          #EDE8D7;  /* warm parchment/cream — page background */
   --black:       #1A1510;  /* deep warm brown-black — text & borders */
   --pink:        #C85A70;  /* dusty rose/mauve — Sonia name slab, focus rings */
+  --orange:      #CF7453;  /* terracotta — RSVP CTA */
   --blue-purple: #5a6ec8;  /* slate blue-purple — Inigo name slab, card headers */
   --cream:       #F5F1E6;  /* off-white — name text, light surfaces */
   --film:        var(--black); /* sprocket strip colour */
