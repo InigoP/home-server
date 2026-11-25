@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Courier_Prime } from "next/font/google";
+import { Bebas_Neue, Caveat, Courier_Prime } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import ViewTransitionLinks from "@/components/ViewTransitionLinks";
@@ -17,6 +17,12 @@ const courierPrime = Courier_Prime({
   subsets: ["latin"],
 });
 
+const caveat = Caveat({
+  weight: ["400", "700"],
+  variable: "--font-hw",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "Sonia & Inigo — June 7, 2027",
   description: "Wedding website for Sonia & Inigo at Pavillon de la Jamaïque, Montréal.",
@@ -26,7 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${bebasNeue.variable} ${courierPrime.variable} h-full`}
+      className={`${bebasNeue.variable} ${courierPrime.variable} ${caveat.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
         <ViewTransitionLinks />

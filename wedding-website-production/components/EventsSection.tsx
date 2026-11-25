@@ -25,6 +25,18 @@ const scriptTransition: React.CSSProperties = {
   marginTop: "2.5rem",
 };
 
+const paperBg = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"), #FDF9EC`;
+
+const scribble: React.CSSProperties = {
+  position: "absolute",
+  fontFamily: "var(--font-hw), cursive",
+  fontSize: "1.35rem",
+  lineHeight: 1.1,
+  color: "#C85A70",
+  pointerEvents: "none",
+  whiteSpace: "nowrap",
+};
+
 const closeBtn: React.CSSProperties = {
   background: "none",
   border: "1.5px solid var(--black)",
@@ -74,11 +86,19 @@ function WelcomeParty({
 
       <article
         className="relative mx-auto px-6"
-        style={{ maxWidth: "720px", background: "#FDF9EC", border: "2px solid var(--black)", padding: "4rem 3.75rem 3.5rem", ...scriptBody }}
+        style={{ maxWidth: "720px", background: paperBg, border: "2px solid var(--black)", padding: "4rem 3.75rem 3.5rem", ...scriptBody }}
       >
         <span style={{ position: "absolute", top: "1rem", right: "1.25rem", fontFamily: "var(--font-se)", fontSize: "0.7rem", opacity: 0.45, letterSpacing: "0.08em" }}>
           1.
         </span>
+
+        <span style={{ ...scribble, top: "3.1rem", left: "0.9rem", transform: "rotate(-6deg)" }}>
+          sneakers ok!
+        </span>
+        <span style={{ ...scribble, bottom: "7.5rem", right: "1.1rem", transform: "rotate(4deg)", fontSize: "1.2rem" }}>
+          let's get the party started!
+        </span>
+
         <p style={{ textTransform: "uppercase", letterSpacing: "0.04em", fontWeight: 700, marginBottom: "1.25rem", marginTop: "2.5rem" }}>
           Cut to:
         </p>
@@ -179,11 +199,19 @@ function Ceremony({
 
       <article
         className="relative mx-auto px-6"
-        style={{ maxWidth: "720px", background: "#FDF9EC", border: "2px solid var(--black)", padding: "4rem 3.75rem 3.5rem", ...scriptBody }}
+        style={{ maxWidth: "720px", background: paperBg, border: "2px solid var(--black)", padding: "4rem 3.75rem 3.5rem", ...scriptBody }}
       >
         <span style={{ position: "absolute", top: "1rem", right: "1.25rem", fontFamily: "var(--font-se)", fontSize: "0.7rem", opacity: 0.45, letterSpacing: "0.08em" }}>
           2.
         </span>
+
+        {/* <span style={{ ...scribble, top: "1rem", left: "0.8rem", transform: "rotate(-5deg)" }}>
+          arrive early — parking!!
+        </span>
+        <span style={{ ...scribble, bottom: "2rem", right: "0.9rem", transform: "rotate(5deg)", fontSize: "1.2rem" }}>
+          dancing shoes 💃
+        </span> */}
+
         <p style={{ textTransform: "uppercase", letterSpacing: "0.04em", fontWeight: 700, marginBottom: "1.25rem", marginTop: "2.5rem" }}>
           Cut to:
         </p>
@@ -233,19 +261,43 @@ function Ceremony({
   );
 }
 
+const VALID_HASHES = new Set(["#welcome-party", "#ceremony"]);
+
 export default function EventsSection() {
   const [active, setActive] = useState<string | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
+  // Sync React state ← URL on mount and on browser back/forward
+  useEffect(() => {
+    const syncFromHash = () => {
+      const hash = window.location.hash;
+      setActive(VALID_HASHES.has(hash) ? hash : null);
+    };
+    syncFromHash();
+    window.addEventListener("popstate", syncFromHash);
+    window.addEventListener("hashchange", syncFromHash);
+    return () => {
+      window.removeEventListener("popstate", syncFromHash);
+      window.removeEventListener("hashchange", syncFromHash);
+    };
+  }, []);
+
+  // Scroll into view when active changes
   useEffect(() => {
     if (active && sectionRef.current) {
       sectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [active]);
 
+  function openAct(href: string) {
+    setActive(href);
+    history.pushState(null, "", href);
+  }
+
   function handleClose() {
     setActive(null);
+    history.pushState(null, "", window.location.pathname);
     heroRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -267,7 +319,7 @@ export default function EventsSection() {
             Weekend of June 6–7
           </h1>
         </div>
-        <Events onActClick={(href) => setActive(href)} />
+        <Events onActClick={openAct} />
       </div>
 
       <div className="sprocket-strip" />
@@ -276,7 +328,7 @@ export default function EventsSection() {
         <WelcomeParty
           sectionRef={sectionRef}
           onClose={handleClose}
-          onContinue={() => setActive("#ceremony")}
+          onContinue={() => openAct("#ceremony")}
         />
       )}
       {active === "#ceremony" && (
@@ -285,8 +337,6 @@ export default function EventsSection() {
           onClose={handleClose}
         />
       )}
-
-      {active && <div className="sprocket-strip" />}
     </>
   );
 }

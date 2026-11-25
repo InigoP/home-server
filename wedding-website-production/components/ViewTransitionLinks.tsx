@@ -50,7 +50,8 @@ export default function ViewTransitionLinks() {
       // Cold path (cache expired after idle): router.push is slow — wait for
       //   navigation to commit AND one paint frame so the transition animates
       //   against the real new DOM instead of flashing stale content.
-      // Both capped at 1s so we never trip Chrome's 4s view-transition timeout.
+      // Capped at 3.2s so we stay under Chrome's 4s view-transition timeout
+      // while giving slow navigations enough time to actually commit.
       const transition = document.startViewTransition(async () => {
         const navigated = Promise.resolve(router.push(href));
         const result = await Promise.race([
@@ -62,7 +63,7 @@ export default function ViewTransitionLinks() {
             navigated.then(
               () => new Promise<void>((r) => requestAnimationFrame(() => r()))
             ),
-            new Promise<void>((r) => setTimeout(r, 1000)),
+            new Promise<void>((r) => setTimeout(r, 3200)),
           ]);
         }
       });
