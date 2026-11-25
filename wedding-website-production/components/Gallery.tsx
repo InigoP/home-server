@@ -70,7 +70,7 @@ export default function Gallery({ photos }: Props) {
       const isMobile = window.innerWidth < 640;
 
       // Card scale affects the on-screen footprint used for overlap math
-      const mobileScale = isMobile ? 0.45 : 1;
+      const mobileScale = isMobile ? 0.45 : 0.75;
       const effCardH = CARD_HEIGHT * mobileScale;
 
       const verticalJitter = (Math.random() * 2 - 1) * (isMobile ? 18 : 28);
@@ -103,9 +103,9 @@ export default function Gallery({ photos }: Props) {
       if (topOffset < minTopOffset) topOffset = minTopOffset;
 
       // Estimate half-width of the hero "Sonia & Inigo" name block from its
-      // clamp(3.9rem, 13vw, 6.5rem) font rule (20px root). Cards sit just outside
+      // clamp(3.9rem, 13vw, 6.5rem) font rule (15px root). Cards sit just outside
       // this plus their own half-width + a few pixels of clearance.
-      const nameFontPx = Math.min(Math.max(0.13 * window.innerWidth, 78), 130);
+      const nameFontPx = Math.min(Math.max(0.13 * window.innerWidth, 58.5), 97.5);
       const nameHalfWidth = nameFontPx * 2.4 + 30;
       const effCardHalfW = (CARD_WIDTH / 2) * mobileScale;
       const nameClearance = nameHalfWidth + effCardHalfW + 8;

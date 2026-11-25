@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 html {
-  font-size: 20px;
+  font-size: 15px;
 }
 
 :root {
@@ -12,7 +12,7 @@ html {
   --blue-purple: #5a6ec8;  /* slate blue-purple — Inigo name slab, card headers */
   --cream:       #F5F1E6;  /* off-white — name text, light surfaces */
   --film:        var(--black); /* sprocket strip colour */
-  --nav-height:  66px;     /* always-on fixed nav height */
+  --nav-height:  50px;     /* always-on fixed nav height */
   --hero-height: calc(100vh - var(--nav-height) - 3rem); /* full viewport minus nav + two sprocket strips */
 }
 
@@ -29,6 +29,7 @@ body {
   font-family: var(--font-se), 'Courier Prime', monospace;
   font-size: 1rem;
   padding-top: var(--nav-height);
+
 }
 
 /* Fixed dot-pattern overlay — carries through to the teal hero, matches save-the-date.css */
