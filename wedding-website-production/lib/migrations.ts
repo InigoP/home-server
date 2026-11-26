@@ -113,13 +113,13 @@ export function runMigrations(db: Database.Database) {
   `);
 
   for (const migration of migrations) {
-    const applied = db.prepare("SELECT 1 FROM schema_migrations WHERE version = ?").get(migration.version);
-    if (!applied) {
-      console.log(`[db] migration ${migration.version}: ${migration.description}`);
-      db.transaction(() => {
+    db.transaction(() => {
+      const applied = db.prepare("SELECT 1 FROM schema_migrations WHERE version = ?").get(migration.version);
+      if (!applied) {
+        console.log(`[db] migration ${migration.version}: ${migration.description}`);
         migration.up(db);
         db.prepare("INSERT INTO schema_migrations (version) VALUES (?)").run(migration.version);
-      })();
-    }
+      }
+    }).exclusive();
   }
 }
