@@ -70,10 +70,10 @@ export default function Gallery({ photos }: Props) {
       const isMobile = window.innerWidth < 640;
 
       // Card scale affects the on-screen footprint used for overlap math
-      const mobileScale = isMobile ? 0.45 : 0.75;
+      const mobileScale = isMobile ? 0.35 : 0.75;
       const effCardH = CARD_HEIGHT * mobileScale;
 
-      const verticalJitter = (Math.random() * 2 - 1) * (isMobile ? 18 : 28);
+      const verticalJitter = (Math.random() * 2 - 1) * (isMobile ? 40 : 28);
       let topOffset: number;
       if (isMobile) {
         // Mobile: distribute cards from just below the nav to well past the
@@ -81,7 +81,7 @@ export default function Gallery({ photos }: Props) {
         const effCardHalfH = (CARD_HEIGHT / 2) * mobileScale;
         const navClearance = 70;
         const minYCenter = navClearance + effCardHalfH;
-        const maxYCenter = window.innerHeight + 450 - effCardHalfH;
+        const maxYCenter = window.innerHeight + 150 - effCardHalfH;
         const yCenter = countOnSide > 1
           ? minYCenter + (sIdx / (countOnSide - 1)) * (maxYCenter - minYCenter)
           : (minYCenter + maxYCenter) / 2;
@@ -126,7 +126,7 @@ export default function Gallery({ photos }: Props) {
       const hT = hSlots[sideFor[i]][sIdx];
       const sideDist = innerEdge + hT * (outerEdge - innerEdge);
       // Outward-only jitter so cards can't drift back into the name block
-      const jitterMax = Math.min(isMobile ? 16 : 35, Math.max(0, maxInner - sideDist));
+      const jitterMax = Math.min(isMobile ? 32 : 35, Math.max(0, maxInner - sideDist));
       const sideJitter = Math.random() * jitterMax;
       const leftOffset = side * (sideDist + sideJitter);
 
